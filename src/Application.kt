@@ -20,7 +20,7 @@ fun Application.module(testing: Boolean = false) {
 
     routing {
         get("/") {
-            call.respondText("HELLO WORLD!", contentType = ContentType.Text.Plain)
+            call.respondText("HELLO WORLD! + email in environment variables : ${System.getenv("EMAIL_USER")}", contentType = ContentType.Text.Plain)
         }
 
         get("/json/gson") {
