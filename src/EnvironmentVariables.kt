@@ -26,7 +26,7 @@ object EnvironmentVariables {
             ?: throw MissingEnvironmentVariables("Environment variables are missing : MONGO_HOSTNAME")
         this.mongoPort = System.getenv(MONGO_PORT)
             ?: throw MissingEnvironmentVariables("Environment variables are missing : MONGO_PORT")
-        
+
         // SMTP configuration (most important) -> Mandatory
         this.smtpServer = System.getenv(SMTP_SERVER)
             ?: throw MissingEnvironmentVariables("Environment variables are missing : SMTP_SERVER")
