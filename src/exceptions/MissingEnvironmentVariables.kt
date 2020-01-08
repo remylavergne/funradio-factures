@@ -1,4 +1,4 @@
-package dev.remylavergne
+package dev.remylavergne.exceptions
 
 class MissingEnvironmentVariables(private val msg: String) : Exception() {
 

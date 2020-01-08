@@ -1,5 +1,7 @@
 package dev.remylavergne
 
+import com.mongodb.MongoClientURI
+import dev.remylavergne.models.entities.EmailDescription
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
@@ -10,6 +12,8 @@ import io.ktor.response.respond
 import io.ktor.response.respondText
 import io.ktor.routing.get
 import io.ktor.routing.routing
+import org.litote.kmongo.KMongo
+import org.litote.kmongo.getCollection
 import org.simplejavamail.api.mailer.config.TransportStrategy
 import org.simplejavamail.email.EmailBuilder
 import org.simplejavamail.mailer.MailerBuilder
@@ -21,6 +25,24 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 fun Application.module(testing: Boolean = false) {
 
     EnvironmentVariables.getEnvironmentVariables()
+
+    // Initialize database
+    val uri =
+        MongoClientURI("mongodb://${EnvironmentVariables.mongoUsername}:${EnvironmentVariables.mongoPassword}@${EnvironmentVariables.mongoHostname}:${EnvironmentVariables.mongoPort}")
+    val client = KMongo.createClient(uri = uri)
+    val database = client.getDatabase(DATABASE_NAME)
+    val collection = database.getCollection<EmailDescription>()
+    // Example
+    collection.insertOne(
+        EmailDescription(
+            receiverEmail = "",
+            senderEmail = "",
+            mailBody = "",
+            fileAdded = 211312,
+            fileName = "",
+            filePath = ""
+        )
+    )
 
     install(ContentNegotiation) {
         gson {
