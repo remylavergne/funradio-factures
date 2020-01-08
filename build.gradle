@@ -35,4 +35,10 @@ dependencies {
     compile "io.ktor:ktor-server-core:$ktor_version"
     compile "io.ktor:ktor-gson:$ktor_version"
     testCompile "io.ktor:ktor-server-tests:$ktor_version"
+    
+    // Mail API
+    // https://mvnrepository.com/artifact/org.simplejavamail/simple-java-mail
+    compile group: 'org.simplejavamail', name: 'simple-java-mail', version: '6.0.0-rc2'
+    compile group: 'org.simplejavamail', name: 'batch-module', version: '6.0.0-rc2'
+
 }
