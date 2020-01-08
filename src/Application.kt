@@ -21,7 +21,8 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 fun Application.module(testing: Boolean = false) {
 
     EnvironmentVariables.getEnvironmentVariables()
-
+    Database.initialization()
+    
     install(ContentNegotiation) {
         gson {
         }
@@ -70,5 +71,9 @@ fun Application.module(testing: Boolean = false) {
             call.respond(mapOf("hello" to "world"))
         }
     }
+}
+
+private fun databaseInitialization() {
+
 }
 
