@@ -19,9 +19,14 @@ object EnvironmentVariables {
     fun getEnvironmentVariables() {
         // MongoDB credentials
         this.mongoUsername = System.getenv(MONGO_USERNAME)
+            ?: throw MissingEnvironmentVariables("Environment variables are missing : MONGO_USERNAME")
         this.mongoPassword = System.getenv(MONGO_PASSWORD)
+            ?: throw MissingEnvironmentVariables("Environment variables are missing : MONGO_PASSWORD")
         this.mongoHostname = System.getenv(MONGO_HOSTNAME)
+            ?: throw MissingEnvironmentVariables("Environment variables are missing : MONGO_HOSTNAME")
         this.mongoPort = System.getenv(MONGO_PORT)
+            ?: throw MissingEnvironmentVariables("Environment variables are missing : MONGO_PORT")
+        
         // SMTP configuration (most important) -> Mandatory
         this.smtpServer = System.getenv(SMTP_SERVER)
             ?: throw MissingEnvironmentVariables("Environment variables are missing : SMTP_SERVER")
