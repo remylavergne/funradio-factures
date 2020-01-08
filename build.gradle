@@ -35,6 +35,7 @@ dependencies {
     compile "io.ktor:ktor-server-core:$ktor_version"
     compile "io.ktor:ktor-gson:$ktor_version"
     testCompile "io.ktor:ktor-server-tests:$ktor_version"
+    compile "io.ktor:ktor-locations:$ktor_version"
     
     // Mail API
     // https://mvnrepository.com/artifact/org.simplejavamail/simple-java-mail

@@ -3,7 +3,8 @@ package dev.remylavergne
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
-import io.ktor.features.ContentNegotiation
+import io.ktor.features.*
+import io.ktor.locations.*
 import io.ktor.gson.gson
 import io.ktor.http.ContentType
 import io.ktor.response.respond
@@ -19,6 +20,24 @@ fun Application.module(testing: Boolean = false) {
 
     EnvironmentVariables.getEnvironmentVariables()
     Database.initialization()
+
+    // This adds automatically Date and Server headers to each response, and would allow you to configure
+    // additional headers served to each response.
+    install(DefaultHeaders)
+    // This uses use the logger to log every call (request/response)
+    install(CallLogging)
+    // Allows to use classes annotated with @Location to represent URLs.
+    // They are typed, can be constructed to generate URLs, and can be used to register routes.
+    install(Locations)
+    // Automatic '304 Not Modified' Responses
+    install(ConditionalHeaders)
+    // Supports for Range, Accept-Range and Content-Range headers
+    install(PartialContent)
+    // This feature enables compression automatically when accepted by the client.
+    install(Compression) {
+        default()
+        excludeContentType(ContentType.Video.Any)
+    }
 
     install(ContentNegotiation) {
         gson {
