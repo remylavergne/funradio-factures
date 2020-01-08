@@ -30,7 +30,7 @@ fun Application.module(testing: Boolean = false) {
     routing {
         get("/") {
 
-            // ConfigLoader.loadProperties("simplejavamail.properties"); // optional default
+            // TODO: Refactor this
 
             val email = EmailBuilder.startingBlank()
                 .from("Rémy Lavergne", "")
