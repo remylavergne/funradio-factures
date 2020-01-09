@@ -1,19 +1,28 @@
 package dev.remylavergne
 
 import io.ktor.application.Application
-import io.ktor.application.call
+import io.ktor.application.ApplicationEnvironment
 import io.ktor.application.install
 import io.ktor.features.*
-import io.ktor.locations.*
 import io.ktor.gson.gson
 import io.ktor.http.ContentType
-import io.ktor.response.respond
-import io.ktor.response.respondText
-import io.ktor.routing.get
+import io.ktor.locations.KtorExperimentalLocationsAPI
+import io.ktor.locations.Location
+import io.ktor.locations.Locations
 import io.ktor.routing.routing
+import kotlinx.io.errors.IOException
+import java.io.File
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
+/**
+ * Location for uploading files.
+ */
+@KtorExperimentalLocationsAPI
+@Location("/upload")
+class Upload()
+
+@KtorExperimentalLocationsAPI
 @Suppress("unused") // Referenced in application.conf
 @kotlin.jvm.JvmOverloads
 fun Application.module(testing: Boolean = false) {
@@ -44,16 +53,25 @@ fun Application.module(testing: Boolean = false) {
         }
     }
 
-    routing {
-        get("/") {
-            call.respondText(
-                "HELLO WORLD! + email in environment variables : ${System.getenv("EMAIL_USER")}",
-                contentType = ContentType.Text.Plain
-            )
-        }
+    val uploadDir = createUploadDirectory(environment)
 
-        get("/json/gson") {
-            call.respond(mapOf("hello" to "world"))
-        }
+    routing {
+        upload(uploadDir)
     }
+}
+
+/**
+ * Create a directory for uploads
+ * Configuration located in application.conf
+ */
+private fun createUploadDirectory(environment: ApplicationEnvironment): File {
+    val facturesConfig = environment.config.config("factures")
+
+    val uploadDirPath: String = facturesConfig.property("upload.dir").getString()
+    val uploadDir = File(uploadDirPath)
+    if (!uploadDir.mkdirs() && !uploadDir.exists()) {
+        throw IOException("Failed to create directory ${uploadDir.absolutePath}")
+    }
+
+    return uploadDir
 }
