@@ -1,6 +1,6 @@
 package dev.remylavergne
 
-// Email configuration // TODO: Don't use environment for this in next release => web interface / rest api
+// Factures configuration
 const val MONGO_USERNAME = "MONGO_USERNAME"
 const val MONGO_PASSWORD = "MONGO_PASSWORD"
 const val MONGO_HOSTNAME = "MONGO_HOSTNAME"

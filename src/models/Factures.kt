@@ -1,8 +1,8 @@
-package dev.remylavergne.models.entities
+package dev.remylavergne.models
 
 import java.util.*
 
-data class EmailDescription(
+data class Factures(
     val id: String = UUID.randomUUID().toString(),
     var receiverEmail: String,
     var senderEmail: String,
