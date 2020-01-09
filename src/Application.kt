@@ -1,18 +1,28 @@
 package dev.remylavergne
 
 import io.ktor.application.Application
-import io.ktor.application.call
+import io.ktor.application.ApplicationEnvironment
 import io.ktor.application.install
-import io.ktor.features.ContentNegotiation
+import io.ktor.features.*
 import io.ktor.gson.gson
 import io.ktor.http.ContentType
-import io.ktor.response.respond
-import io.ktor.response.respondText
-import io.ktor.routing.get
+import io.ktor.locations.KtorExperimentalLocationsAPI
+import io.ktor.locations.Location
+import io.ktor.locations.Locations
 import io.ktor.routing.routing
+import kotlinx.io.errors.IOException
+import java.io.File
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
+/**
+ * Location for uploading files.
+ */
+@KtorExperimentalLocationsAPI
+@Location("/upload")
+class Upload()
+
+@KtorExperimentalLocationsAPI
 @Suppress("unused") // Referenced in application.conf
 @kotlin.jvm.JvmOverloads
 fun Application.module(testing: Boolean = false) {
@@ -20,21 +30,48 @@ fun Application.module(testing: Boolean = false) {
     EnvironmentVariables.getEnvironmentVariables()
     Database.initialization()
 
+    // This adds automatically Date and Server headers to each response, and would allow you to configure
+    // additional headers served to each response.
+    install(DefaultHeaders)
+    // This uses use the logger to log every call (request/response)
+    install(CallLogging)
+    // Allows to use classes annotated with @Location to represent URLs.
+    // They are typed, can be constructed to generate URLs, and can be used to register routes.
+    install(Locations)
+    // Automatic '304 Not Modified' Responses
+    install(ConditionalHeaders)
+    // Supports for Range, Accept-Range and Content-Range headers
+    install(PartialContent)
+    // This feature enables compression automatically when accepted by the client.
+    install(Compression) {
+        default()
+        excludeContentType(ContentType.Video.Any)
+    }
+
     install(ContentNegotiation) {
         gson {
         }
     }
 
-    routing {
-        get("/") {
-            call.respondText(
-                "HELLO WORLD! + email in environment variables : ${System.getenv("EMAIL_USER")}",
-                contentType = ContentType.Text.Plain
-            )
-        }
+    val uploadDir = createUploadDirectory(environment)
 
-        get("/json/gson") {
-            call.respond(mapOf("hello" to "world"))
-        }
+    routing {
+        upload(uploadDir)
     }
+}
+
+/**
+ * Create a directory for uploads
+ * Configuration located in application.conf
+ */
+private fun createUploadDirectory(environment: ApplicationEnvironment): File {
+    val facturesConfig = environment.config.config("factures")
+
+    val uploadDirPath: String = facturesConfig.property("upload.dir").getString()
+    val uploadDir = File(uploadDirPath)
+    if (!uploadDir.mkdirs() && !uploadDir.exists()) {
+        throw IOException("Failed to create directory ${uploadDir.absolutePath}")
+    }
+
+    return uploadDir
 }
