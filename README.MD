@@ -1,4 +1,4 @@
-# Fun Radio factures
+# Fun Radio factures (periodic mail scheduling)
 
 Envoyez périodiquement, et facilement, vos factures à **Fun Radio** pour augmenter vos chances.
 
