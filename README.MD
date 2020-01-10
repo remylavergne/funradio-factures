@@ -13,7 +13,7 @@ OUI, des solutions d'envoi de mails récurrants existent déjà (quelques exempl
 MAIS, mon but ici est d'apprendre des choses, et donc, monter en compétences:
 
 - Apprendre le framework [Ktor](https://ktor.io/), et les paradigmes côté serveurs / frontend
-- Améliorer mes connaissances en Kotlin
+- Améliorer mes connaissances en **Kotlin**
 - Monter en compétence sur Docker, en *dockerizant* une solution complète, et la rendre facilement déployable en quelques clics
 - Ne pas limiter l'envoi de mail à un seul type de service, et avoir une configuration souple
 - Prendre du plaisir ❤️
