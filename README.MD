@@ -18,7 +18,7 @@ MAIS, mon but ici est d'apprendre des choses, et donc, monter en compétences:
 - Ne pas limiter l'envoi de mail à un seul type de service, et avoir une configuration souple
 - Prendre du plaisir ❤️
 
-## Variables d'environnement (obligatoires)
+## 🌍Variables d'environnement (obligatoires)
 
 ### Base de données MongoDB
 
