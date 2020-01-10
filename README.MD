@@ -2,7 +2,7 @@
 
 Envoyez périodiquement, et facilement, vos factures à **Fun Radio** pour augmenter vos chances.
 
-## Contexte
+## ❓Contexte
 
 OUI, des solutions d'envoi de mails récurrants existent déjà (quelques exemples, pour la plupart payantes):
 
