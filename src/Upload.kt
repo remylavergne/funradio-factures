@@ -8,6 +8,7 @@ import io.ktor.http.content.forEachPart
 import io.ktor.http.content.streamProvider
 import io.ktor.locations.KtorExperimentalLocationsAPI
 import io.ktor.locations.post
+import io.ktor.request.receive
 import io.ktor.request.receiveMultipart
 import io.ktor.response.respond
 import io.ktor.routing.Route
@@ -30,6 +31,7 @@ fun Route.upload(uploadDir: File) {
      */
     post<Upload> {
 
+        var test = call.receive(EmailInformations::class)
         val multipart = call.receiveMultipart()
         var title = ""
         var attachmentFile: File? = null
@@ -63,19 +65,24 @@ fun Route.upload(uploadDir: File) {
     }
 }
 
-private fun persistInformations(fileUploaded: File) {
-    val facture = Facture(
-        receiverEmail = "lavergne.remy@gmail.com",
-        senderEmail = "lavergne.remy@gmail.com",
-        mailTitle = "Mes nouvelles chaussures",
-        mailBody = "Cette facture est celle de mes nouvelles chaussures de running :)",
-        fileName = fileUploaded.name,
-        fileAdded = System.currentTimeMillis()
-    )
+data class EmailInformations(
+    val receiverEmail: String,
+    val mailTitle: String,
+    val mailBody: String
+)
 
-    // Persist
+private fun persistInformations(fileUploaded: File, informations: EmailInformations? = null) {
     try {
-        Database.collection.insertOne(facture)
+        Database.persist(
+            Facture(
+                receiverEmail = "lavergne.remy@gmail.com",
+                senderEmail = "lavergne.remy@gmail.com",
+                mailTitle = "Mes nouvelles chaussures",
+                mailBody = "Cette facture est celle de mes nouvelles chaussures de running :)",
+                fileName = fileUploaded.name,
+                fileAdded = System.currentTimeMillis()
+            )
+        )
     } catch (e: Exception) {
         println("Error to persist facture in mongodb database...")
     }
