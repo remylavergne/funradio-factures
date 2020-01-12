@@ -8,8 +8,8 @@ import io.ktor.http.content.forEachPart
 import io.ktor.http.content.streamProvider
 import io.ktor.locations.KtorExperimentalLocationsAPI
 import io.ktor.locations.post
-import io.ktor.request.receive
 import io.ktor.request.receiveMultipart
+import io.ktor.request.receiveParameters
 import io.ktor.response.respond
 import io.ktor.routing.Route
 import kotlinx.coroutines.CoroutineDispatcher
@@ -30,8 +30,7 @@ fun Route.upload(uploadDir: File) {
      * Registers a POST route for [Upload]
      */
     post<Upload> {
-
-        var test = call.receive(EmailInformations::class)
+        
         val multipart = call.receiveMultipart()
         var title = ""
         var attachmentFile: File? = null
