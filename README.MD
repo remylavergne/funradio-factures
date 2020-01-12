@@ -1,12 +1,24 @@
-# Fun Radio factures
+# Fun Radio factures (periodic mail scheduling)
 
 Envoyez périodiquement, et facilement, vos factures à **Fun Radio** pour augmenter vos chances.
 
-## Contexte
+## ❓Contexte
 
-L'idée de base étant celle-ci, ce serveur peut aussi servir à d'autres usages, pour des tâches redondantes 🤓
+OUI, des solutions d'envoi de mails récurrants existent déjà (quelques exemples, pour la plupart payantes):
 
-## Variables d'environnement (obligatoires)
+- [Boomerang for Gmail](https://www.boomeranggmail.com/l/how-to-send-recurring-emails.html)
+- [rightinbox](https://www.rightinbox.com/features/recurring-emails)
+- ...
+
+MAIS, mon but ici est d'apprendre des choses, et donc, monter en compétences:
+
+- Apprendre le framework [Ktor](https://ktor.io/), et les paradigmes côté serveurs / frontend
+- Améliorer mes connaissances en **Kotlin**
+- Monter en compétence sur Docker, en *dockerizant* une solution complète, et la rendre facilement déployable en quelques clics
+- Ne pas limiter l'envoi de mail à un seul type de service, et avoir une configuration souple
+- Prendre du plaisir ❤️
+
+## 🌍 Variables d'environnement (obligatoires)
 
 ### Base de données MongoDB
 
