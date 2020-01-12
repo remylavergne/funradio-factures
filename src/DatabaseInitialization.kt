@@ -28,5 +28,9 @@ object Database {
         }
     }
 
+    fun persist(facture: Facture) {
+        collection.insertOne(facture)
+    }
+
 
 }
