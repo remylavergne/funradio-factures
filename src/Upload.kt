@@ -1,7 +1,7 @@
 package dev.remylavergne
 
+import dev.remylavergne.models.Facture
 import io.ktor.application.call
-import io.ktor.html.respondHtml
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.PartData
 import io.ktor.http.content.forEachPart
@@ -10,13 +10,12 @@ import io.ktor.locations.KtorExperimentalLocationsAPI
 import io.ktor.locations.get
 import io.ktor.locations.post
 import io.ktor.request.receiveMultipart
+import io.ktor.response.respond
 import io.ktor.routing.Route
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.yield
-import kotlinx.html.head
-import kotlinx.html.title
 import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
@@ -27,37 +26,8 @@ import java.io.OutputStream
 @KtorExperimentalLocationsAPI
 fun Route.upload(uploadDir: File) {
 
-    /**
-     * Registers a GET route for [Upload] that displays a HTML page with a form to upload a new video.
-     *
-     * If the user is not logged in (no session is found), it redirects to the [Login] page.
-     */
     get<Upload> {
-
-        /* call.respondHtml(emptyList(), CacheControl.Visibility.Private) {
-             h2 { +"Upload video" }
-
-             form(
-                 call.url(Upload()),
-                 classes = "pure-form-stacked",
-                 encType = FormEncType.multipartFormData,
-                 method = FormMethod.post
-             ) {
-                 acceptCharset = "utf-8"
-
-                 label {
-                     htmlFor = "title"; +"Title:"
-                     textInput { name = "title"; id = "title" }
-                 }
-
-                 br()
-                 fileInput { name = "file" }
-                 br()
-
-                 submitInput(classes = "pure-button pure-button-primary") { value = "Upload" }
-             }
-         }
-     } */
+        call.respond(HttpStatusCode.OK, ResponseTest("Un message String", 42))
     }
 
     /**
@@ -67,7 +37,7 @@ fun Route.upload(uploadDir: File) {
 
         val multipart = call.receiveMultipart()
         var title = ""
-       // var attachmentFile: File? = null
+        var attachmentFile: File? = null
 
         // Processes each part of the multipart input content of the user
         multipart.forEachPart { part ->
@@ -83,19 +53,34 @@ fun Route.upload(uploadDir: File) {
                 )
 
                 part.streamProvider().use { its -> file.outputStream().buffered().use { its.copyToSuspend(it) } }
-               // attachmentFile = file
+                attachmentFile = file
             }
 
             part.dispose()
         }
 
-        call.respondHtml(HttpStatusCode.OK) {
-            this.head {
-                this.title("File well upload !")
-            }
-        }
+        // Persist file
+        attachmentFile?.let {
+            persistInformations(it)
+        } ?: call.respond(HttpStatusCode.OK, "File upload error")
+
+        call.respond(HttpStatusCode.OK, "File well upload")
     }
 }
+
+private fun persistInformations(fileUploaded: File) {
+    val facture: Facture = Facture(
+        receiverEmail = "",
+        senderEmail = "",
+        mailTitle = "",
+        mailBody = "",
+        fileName = fileUploaded.name,
+        fileAdded = System.currentTimeMillis()
+    )
+
+    // Persist
+}
+
 
 /**
  * Utility boilerplate method that suspending,
