@@ -7,7 +7,6 @@ import io.ktor.http.content.PartData
 import io.ktor.http.content.forEachPart
 import io.ktor.http.content.streamProvider
 import io.ktor.locations.KtorExperimentalLocationsAPI
-import io.ktor.locations.get
 import io.ktor.locations.post
 import io.ktor.request.receiveMultipart
 import io.ktor.response.respond
@@ -25,10 +24,6 @@ import java.io.OutputStream
  */
 @KtorExperimentalLocationsAPI
 fun Route.upload(uploadDir: File) {
-
-    get<Upload> {
-        call.respond(HttpStatusCode.OK, ResponseTest("Un message String", 42))
-    }
 
     /**
      * Registers a POST route for [Upload]
@@ -69,16 +64,21 @@ fun Route.upload(uploadDir: File) {
 }
 
 private fun persistInformations(fileUploaded: File) {
-    val facture: Facture = Facture(
-        receiverEmail = "",
-        senderEmail = "",
-        mailTitle = "",
-        mailBody = "",
+    val facture = Facture(
+        receiverEmail = "lavergne.remy@gmail.com",
+        senderEmail = "lavergne.remy@gmail.com",
+        mailTitle = "Mes nouvelles chaussures",
+        mailBody = "Cette facture est celle de mes nouvelles chaussures de running :)",
         fileName = fileUploaded.name,
         fileAdded = System.currentTimeMillis()
     )
 
     // Persist
+    try {
+        Database.collection.insertOne(facture)
+    } catch (e: Exception) {
+        println("Error to persist facture in mongodb database...")
+    }
 }
 
 
