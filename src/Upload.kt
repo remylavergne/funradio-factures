@@ -1,22 +1,21 @@
 package dev.remylavergne
 
+import dev.remylavergne.models.Facture
+import dev.remylavergne.models.dto.EmailInformations
 import io.ktor.application.call
-import io.ktor.html.respondHtml
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.PartData
 import io.ktor.http.content.forEachPart
 import io.ktor.http.content.streamProvider
 import io.ktor.locations.KtorExperimentalLocationsAPI
-import io.ktor.locations.get
 import io.ktor.locations.post
 import io.ktor.request.receiveMultipart
+import io.ktor.response.respond
 import io.ktor.routing.Route
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.yield
-import kotlinx.html.head
-import kotlinx.html.title
 import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
@@ -28,74 +27,72 @@ import java.io.OutputStream
 fun Route.upload(uploadDir: File) {
 
     /**
-     * Registers a GET route for [Upload] that displays a HTML page with a form to upload a new video.
-     *
-     * If the user is not logged in (no session is found), it redirects to the [Login] page.
-     */
-    get<Upload> {
-
-        /* call.respondHtml(emptyList(), CacheControl.Visibility.Private) {
-             h2 { +"Upload video" }
-
-             form(
-                 call.url(Upload()),
-                 classes = "pure-form-stacked",
-                 encType = FormEncType.multipartFormData,
-                 method = FormMethod.post
-             ) {
-                 acceptCharset = "utf-8"
-
-                 label {
-                     htmlFor = "title"; +"Title:"
-                     textInput { name = "title"; id = "title" }
-                 }
-
-                 br()
-                 fileInput { name = "file" }
-                 br()
-
-                 submitInput(classes = "pure-button pure-button-primary") { value = "Upload" }
-             }
-         }
-     } */
-    }
-
-    /**
      * Registers a POST route for [Upload]
      */
     post<Upload> {
 
         val multipart = call.receiveMultipart()
-        var title = ""
-       // var attachmentFile: File? = null
+        var attachmentFile: File? = null
+        val emailInformations = EmailInformations()
 
         // Processes each part of the multipart input content of the user
         multipart.forEachPart { part ->
-            if (part is PartData.FormItem) {
-                if (part.name == "title") {
-                    title = part.value
-                }
-            } else if (part is PartData.FileItem) {
-                val ext = File(part.originalFileName ?: "no_name").extension
-                val file = File(
-                    uploadDir,
-                    "upload-${System.currentTimeMillis()}-${title.hashCode()}.$ext"
-                )
 
-                part.streamProvider().use { its -> file.outputStream().buffered().use { its.copyToSuspend(it) } }
-               // attachmentFile = file
+            when (part) {
+                is PartData.FormItem -> {
+                    when (part.name) {
+                        "receiverEmail" -> emailInformations.receiverEmail = part.value
+                        "mailTitle" -> emailInformations.mailTitle = part.value
+                        "mailBody" -> emailInformations.mailBody = part.value
+                    }
+                }
+                is PartData.FileItem -> {
+                    val ext = File(part.originalFileName ?: "no_name").extension
+                    val file = File(
+                        uploadDir,
+                        "${part.originalFileName}-${System.currentTimeMillis()}.$ext"
+                    )
+
+                    part.streamProvider().use { its -> file.outputStream().buffered().use { its.copyToSuspend(it) } }
+                    attachmentFile = file
+                }
             }
 
             part.dispose()
         }
 
-        call.respondHtml(HttpStatusCode.OK) {
-            this.head {
-                this.title("File well upload !")
-            }
+        // Persist file
+        if (attachmentFile != null && emailInformations.areValid()) {
+            attachmentFile?.let { persistInformations(it, emailInformations) }
+            call.respond(HttpStatusCode.PreconditionFailed, "File well upload")
+        } else {
+            call.respond(HttpStatusCode.OK, "File upload error")
         }
     }
 }
+
+
+/**
+ * Make final object to persist all informations locally
+ * @param fileUploaded the file uploaded by end user
+ * @param informations object who hold mandatories informations to use the service
+ */
+private fun persistInformations(fileUploaded: File, informations: EmailInformations) {
+    try {
+        Database.persist(
+            Facture(
+                receiverEmail = informations.receiverEmail,
+                mailTitle = informations.mailTitle,
+                mailBody = informations.mailBody,
+                fileName = fileUploaded.name,
+                fileAdded = System.currentTimeMillis()
+            )
+        )
+    } catch (e: Exception) {
+        println("Error to persist facture in mongodb database...")
+    }
+}
+
 
 /**
  * Utility boilerplate method that suspending,
