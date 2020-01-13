@@ -5,7 +5,6 @@ import java.util.*
 data class Facture(
     val id: String = UUID.randomUUID().toString(),
     var receiverEmail: String,
-    var senderEmail: String,
     var mailTitle: String? = null,
     var mailBody: String,
     var fileName: String,

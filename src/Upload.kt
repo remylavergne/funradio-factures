@@ -1,6 +1,7 @@
 package dev.remylavergne
 
 import dev.remylavergne.models.Facture
+import dev.remylavergne.models.dto.EmailInformations
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.PartData
@@ -9,7 +10,6 @@ import io.ktor.http.content.streamProvider
 import io.ktor.locations.KtorExperimentalLocationsAPI
 import io.ktor.locations.post
 import io.ktor.request.receiveMultipart
-import io.ktor.request.receiveParameters
 import io.ktor.response.respond
 import io.ktor.routing.Route
 import kotlinx.coroutines.CoroutineDispatcher
@@ -30,54 +30,60 @@ fun Route.upload(uploadDir: File) {
      * Registers a POST route for [Upload]
      */
     post<Upload> {
-        
+
         val multipart = call.receiveMultipart()
-        var title = ""
         var attachmentFile: File? = null
+        val emailInformations = EmailInformations()
 
         // Processes each part of the multipart input content of the user
         multipart.forEachPart { part ->
-            if (part is PartData.FormItem) {
-                if (part.name == "title") {
-                    title = part.value
-                }
-            } else if (part is PartData.FileItem) {
-                val ext = File(part.originalFileName ?: "no_name").extension
-                val file = File(
-                    uploadDir,
-                    "upload-${System.currentTimeMillis()}-${title.hashCode()}.$ext"
-                )
 
-                part.streamProvider().use { its -> file.outputStream().buffered().use { its.copyToSuspend(it) } }
-                attachmentFile = file
+            when (part) {
+                is PartData.FormItem -> {
+                    when (part.name) {
+                        "receiverEmail" -> emailInformations.receiverEmail = part.value
+                        "mailTitle" -> emailInformations.mailTitle = part.value
+                        "mailBody" -> emailInformations.mailBody = part.value
+                    }
+                }
+                is PartData.FileItem -> {
+                    val ext = File(part.originalFileName ?: "no_name").extension
+                    val file = File(
+                        uploadDir,
+                        "${part.originalFileName}-${System.currentTimeMillis()}.$ext"
+                    )
+
+                    part.streamProvider().use { its -> file.outputStream().buffered().use { its.copyToSuspend(it) } }
+                    attachmentFile = file
+                }
             }
 
             part.dispose()
         }
 
         // Persist file
-        attachmentFile?.let {
-            persistInformations(it)
-        } ?: call.respond(HttpStatusCode.OK, "File upload error")
-
-        call.respond(HttpStatusCode.OK, "File well upload")
+        if (attachmentFile != null && emailInformations.areValid()) {
+            attachmentFile?.let { persistInformations(it, emailInformations) }
+            call.respond(HttpStatusCode.PreconditionFailed, "File well upload")
+        } else {
+            call.respond(HttpStatusCode.OK, "File upload error")
+        }
     }
 }
 
-data class EmailInformations(
-    val receiverEmail: String,
-    val mailTitle: String,
-    val mailBody: String
-)
 
-private fun persistInformations(fileUploaded: File, informations: EmailInformations? = null) {
+/**
+ * Make final object to persist all informations locally
+ * @param fileUploaded the file uploaded by end user
+ * @param informations object who hold mandatories informations to use the service
+ */
+private fun persistInformations(fileUploaded: File, informations: EmailInformations) {
     try {
         Database.persist(
             Facture(
-                receiverEmail = "lavergne.remy@gmail.com",
-                senderEmail = "lavergne.remy@gmail.com",
-                mailTitle = "Mes nouvelles chaussures",
-                mailBody = "Cette facture est celle de mes nouvelles chaussures de running :)",
+                receiverEmail = informations.receiverEmail,
+                mailTitle = informations.mailTitle,
+                mailBody = informations.mailBody,
                 fileName = fileUploaded.name,
                 fileAdded = System.currentTimeMillis()
             )
