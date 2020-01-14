@@ -9,8 +9,6 @@ data class Facture(
     var mailBody: String,
     var fileName: String,
     var fileAdded: Long,
-    var active: Boolean = true,
-    val delayMillis: Long = 0,
-    val repeatMillis: Long = 0
+    var active: Boolean = true
 ) {
 }
