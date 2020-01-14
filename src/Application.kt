@@ -1,8 +1,11 @@
 package dev.remylavergne
 
+import dev.remylavergne.routing.scheduler
+import dev.remylavergne.routing.upload
 import io.ktor.application.Application
 import io.ktor.application.ApplicationEnvironment
 import io.ktor.application.install
+import io.ktor.application.log
 import io.ktor.features.*
 import io.ktor.gson.gson
 import io.ktor.http.ContentType
@@ -12,6 +15,7 @@ import io.ktor.locations.Locations
 import io.ktor.routing.routing
 import kotlinx.io.errors.IOException
 import java.io.File
+import java.io.Serializable
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -21,6 +25,11 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 @KtorExperimentalLocationsAPI
 @Location("/upload")
 class Upload()
+
+@KtorExperimentalLocationsAPI
+@Location("/scheduler")
+class Scheduler(): Serializable
+
 
 @KtorExperimentalLocationsAPI
 @Suppress("unused") // Referenced in application.conf
@@ -56,7 +65,9 @@ fun Application.module(testing: Boolean = false) {
     val uploadDir = createUploadDirectory(environment)
 
     routing {
+        trace { application.log.warn(it.buildText()) }
         upload(uploadDir)
+        scheduler()
     }
 }
 
