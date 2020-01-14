@@ -15,7 +15,6 @@ import io.ktor.locations.Locations
 import io.ktor.routing.routing
 import kotlinx.io.errors.IOException
 import java.io.File
-import java.io.Serializable
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -23,12 +22,20 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
  * Location for uploading files.
  */
 @KtorExperimentalLocationsAPI
-@Location("/upload")
+@Location("/upload") // TODO: rename /attachments/create
 class Upload()
 
 @KtorExperimentalLocationsAPI
 @Location("/scheduling")
-class Scheduling() : Serializable
+class Scheduling()
+
+@KtorExperimentalLocationsAPI
+@Location("/attachments") // Get all
+class Attachment()
+
+@KtorExperimentalLocationsAPI
+@Location("/attachments/{id}/delete")
+class AttachmentDelete(val id: List<String>)
 
 @KtorExperimentalLocationsAPI
 @Suppress("unused") // Referenced in application.conf
