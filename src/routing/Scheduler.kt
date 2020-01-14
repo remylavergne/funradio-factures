@@ -1,28 +1,31 @@
 package dev.remylavergne.routing
 
-import dev.remylavergne.Scheduler
-import io.ktor.application.*
-import io.ktor.http.*
-import io.ktor.locations.*
-import io.ktor.request.*
+import dev.remylavergne.Scheduling
+import dev.remylavergne.models.dto.SchedulerDto
+import io.ktor.application.call
+import io.ktor.locations.KtorExperimentalLocationsAPI
+import io.ktor.locations.post
+import io.ktor.request.receive
 import io.ktor.response.respond
-import io.ktor.routing.*
-import io.ktor.sessions.*
-import java.io.Serializable
+import io.ktor.routing.Route
 
 @KtorExperimentalLocationsAPI
-fun Route.scheduler() {
+fun Route.scheduling() {
 
-    post<Scheduler> {
+    post<Scheduling> {
 
-        val registration = call.receive<State>()
+        val schedulerDto = call.receive<SchedulerDto>()
 
-        println()
+        if (schedulerDto.start) {
+            // Start scheduling for each ids
+
+        } else {
+            // Stop Scheduling
+
+        }
 
         call.respond("Reached !")
 
     }
 
 }
-
-data class State(val state: Boolean): Serializable
