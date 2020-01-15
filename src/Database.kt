@@ -6,6 +6,8 @@ import com.mongodb.client.MongoCollection
 import com.mongodb.client.MongoDatabase
 import dev.remylavergne.models.Email
 import org.litote.kmongo.KMongo
+import org.litote.kmongo.eq
+import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
 
 object Database {
@@ -29,7 +31,15 @@ object Database {
     }
 
     fun persist(email: Email) {
-        collection.insertOne(email)
+        this.collection.insertOne(email)
+    }
+
+    @Throws(Exception::class)
+    fun getEmailById(id: String): Email {
+        val email = this.collection.findOne(Email::id eq id)
+        email?.let {
+            return it
+        } ?: throw Exception("Email id $id not found !")
     }
 
 

@@ -1,0 +1,35 @@
+POST http://localhost:8080/scheduling
+Content-Type: application/json
+
+{
+    "start": true,
+    "emailId": "123cd29c-97b0-45ee-a13d-6eda940854aa"
+}
+
+###
+
+POST /upload HTTP/1.1
+Host: localhost:8080
+Content-Type: multipart/form-data; boundary=--------------------------423360379973048303416585
+
+----WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="receiverEmail"
+
+test
+----WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="mailTitle"
+
+title
+----WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="mailBody"
+
+body
+----WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="repeat"
+
+0
+----WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="delayMillis"
+
+10000
+----WebKitFormBoundary7MA4YWxkTrZu0gW
