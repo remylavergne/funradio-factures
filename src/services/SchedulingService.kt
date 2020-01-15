@@ -1,6 +1,6 @@
 package dev.remylavergne.services
 
-import dev.remylavergne.models.Facture
+import dev.remylavergne.models.dto.SchedulerDto
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -23,7 +23,30 @@ object SchedulingService {
             }
         }
 
-    fun addAttachments(facture: Facture) {
+    // TODO: Make this with Coroutines and wait for all jobs done
+    fun schedule(jobs: List<SchedulerDto>) {
+        jobs.forEach { schedule ->
+            if (schedule.start) {
+                this.start(schedule)
+            } else {
+                this.stop(schedule)
+            }
+        }
+    }
+
+    fun getAllCurrentJobs(): List<Job> {
+        return this.jobs
+    }
+
+    /**
+     *
+     */
+
+    private fun start(job: SchedulerDto) {
+
+    }
+
+    private fun stop(job: SchedulerDto) {
 
     }
 }
