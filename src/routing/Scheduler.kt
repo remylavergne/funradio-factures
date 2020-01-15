@@ -30,7 +30,7 @@ fun Route.scheduling() {
         // TODO: Implement coroutines
         SchedulingService.schedule(listOf(schedulerDto))
 
-        call.respond("Reached !")
+        call.respond("Jobs started !")
 
     }
 

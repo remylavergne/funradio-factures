@@ -1,5 +1,6 @@
 package dev.remylavergne.services
 
+import dev.remylavergne.Database
 import dev.remylavergne.models.Email
 import dev.remylavergne.models.dto.SchedulerDto
 import kotlinx.coroutines.GlobalScope
@@ -45,6 +46,9 @@ object SchedulingService {
 
     private fun start(job: SchedulerDto) {
         // Create Email
+        val emailById = Database.getEmailById(job.emailId)
+
+        println()
     }
 
     private fun stop(job: SchedulerDto) {
