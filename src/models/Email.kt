@@ -8,8 +8,8 @@ data class Email(
     var receiverEmail: String,
     var mailTitle: String? = null,
     var mailBody: String,
-    var fileName: String,
-    var fileAdded: Long,
+    var fileName: String?,
+    var createdAt: Long,
     var active: Boolean = true,
     var delayMillis: Long = 10000, // Every 10 seconds
     var repeat: Long = 0, // Default: Unlimited

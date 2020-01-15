@@ -7,5 +7,6 @@ data class EmailInformations(
     var repeat: Long = 0,
     var delayMillis: Long = 10000
 ) {
+    /** Minimum informations */
     fun areValid() = receiverEmail.isNotEmpty() && mailTitle.isNotEmpty() && mailBody.isNotEmpty()
 }

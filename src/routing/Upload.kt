@@ -66,11 +66,11 @@ fun Route.upload(uploadDir: File) {
         }
 
         // Persist file
-        if (attachmentFile != null && emailInformations.areValid()) {
-            attachmentFile?.let { persistInformations(it, emailInformations) }
-            call.respond(HttpStatusCode.PreconditionFailed, "File well upload")
+        if (emailInformations.areValid()) {
+            persistInformations(emailInformations, attachmentFile)
+            call.respond(HttpStatusCode.OK, "Email created and saved.")
         } else {
-            call.respond(HttpStatusCode.OK, "File upload error")
+            call.respond(HttpStatusCode.NotAcceptable, "File upload error")
         }
     }
 }
@@ -81,15 +81,15 @@ fun Route.upload(uploadDir: File) {
  * @param fileUploaded the file uploaded by end user
  * @param informations object who hold mandatories informations to use the service
  */
-private fun persistInformations(fileUploaded: File, informations: EmailInformations) {
+private fun persistInformations(informations: EmailInformations, fileUploaded: File? = null) {
     try {
         Database.persist(
             Email(
                 receiverEmail = informations.receiverEmail,
                 mailTitle = informations.mailTitle,
                 mailBody = informations.mailBody,
-                fileName = fileUploaded.name,
-                fileAdded = System.currentTimeMillis()
+                fileName = fileUploaded?.name,
+                createdAt = System.currentTimeMillis()
             )
         )
     } catch (e: Exception) {
