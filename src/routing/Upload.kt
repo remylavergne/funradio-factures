@@ -2,7 +2,7 @@ package dev.remylavergne.routing
 
 import dev.remylavergne.Database
 import dev.remylavergne.Upload
-import dev.remylavergne.models.Facture
+import dev.remylavergne.models.Email
 import dev.remylavergne.models.dto.EmailInformations
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
@@ -46,6 +46,8 @@ fun Route.upload(uploadDir: File) {
                         "receiverEmail" -> emailInformations.receiverEmail = part.value
                         "mailTitle" -> emailInformations.mailTitle = part.value
                         "mailBody" -> emailInformations.mailBody = part.value
+                        "repeat" -> emailInformations.repeat = part.value.toLong()
+                        "delayMillis" -> emailInformations.delayMillis = part.value.toLong()
                     }
                 }
                 is PartData.FileItem -> {
@@ -82,7 +84,7 @@ fun Route.upload(uploadDir: File) {
 private fun persistInformations(fileUploaded: File, informations: EmailInformations) {
     try {
         Database.persist(
-            Facture(
+            Email(
                 receiverEmail = informations.receiverEmail,
                 mailTitle = informations.mailTitle,
                 mailBody = informations.mailBody,
