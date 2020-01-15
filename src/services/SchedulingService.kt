@@ -1,5 +1,6 @@
 package dev.remylavergne.services
 
+import dev.remylavergne.models.Email
 import dev.remylavergne.models.dto.SchedulerDto
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -8,7 +9,7 @@ import kotlinx.coroutines.launch
 
 object SchedulingService {
 
-    private val jobs: List<Job> = emptyList()
+    private val jobsRunning: List<Email> = emptyList()
 
     private fun startCoroutineTimer(delayMillis: Long = 0, repeatMillis: Long = 0, action: () -> Unit) =
         GlobalScope.launch {
@@ -34,8 +35,8 @@ object SchedulingService {
         }
     }
 
-    fun getAllCurrentJobs(): List<Job> {
-        return this.jobs
+    fun getAllCurrentJobs(): List<Email> {
+        return this.jobsRunning
     }
 
     /**
@@ -43,7 +44,7 @@ object SchedulingService {
      */
 
     private fun start(job: SchedulerDto) {
-
+        // Create Email
     }
 
     private fun stop(job: SchedulerDto) {

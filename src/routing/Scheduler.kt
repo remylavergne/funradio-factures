@@ -17,9 +17,10 @@ fun Route.scheduling() {
     get<Scheduling> {
 
         // Get all current jobs
-        val currentJobs = SchedulingService.getAllCurrentJobs()
+        // TODO: Coroutines
+        val currentEmailsRunning = SchedulingService.getAllCurrentJobs()
 
-        call.respond(currentJobs)
+        call.respond(currentEmailsRunning)
     }
 
     post<Scheduling> {
