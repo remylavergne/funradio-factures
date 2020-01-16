@@ -1,7 +1,7 @@
 package dev.remylavergne.routing
 
-import dev.remylavergne.Database
 import dev.remylavergne.Create
+import dev.remylavergne.Database
 import dev.remylavergne.models.Email
 import dev.remylavergne.models.dto.EmailDto
 import io.ktor.application.call
@@ -67,8 +67,8 @@ fun Route.create(uploadDir: File) {
 
         // Persist file
         if (emailInformations.areValid()) {
-            persistInformations(emailInformations, attachmentFile)
-            call.respond(HttpStatusCode.OK, "Email created and saved.")
+            val id = persistInformations(emailInformations, attachmentFile)
+            call.respond(HttpStatusCode.OK, "Email with id $id has been created.")
         } else {
             call.respond(HttpStatusCode.NotAcceptable, "File upload error")
         }
@@ -81,20 +81,25 @@ fun Route.create(uploadDir: File) {
  * @param fileUploaded the file uploaded by end user
  * @param dto object who hold mandatories informations to use the service
  */
-private fun persistInformations(dto: EmailDto, fileUploaded: File? = null) {
+private fun persistInformations(dto: EmailDto, fileUploaded: File? = null): String {
+    var id = ""
+
     try {
-        Database.persist(
-            Email(
-                receiverEmail = dto.receiverEmail,
-                mailTitle = dto.mailTitle,
-                mailBody = dto.mailBody,
-                fileName = fileUploaded?.name,
-                createdAt = System.currentTimeMillis()
-            )
+        val newEmail = Email(
+            receiverEmail = dto.receiverEmail,
+            mailTitle = dto.mailTitle,
+            mailBody = dto.mailBody,
+            fileName = fileUploaded?.name,
+            createdAt = System.currentTimeMillis()
         )
+
+        Database.persist(newEmail)
+        id = newEmail.id
     } catch (e: Exception) {
         println("Error to persist facture in mongodb database...")
     }
+
+    return id
 }
 
 
