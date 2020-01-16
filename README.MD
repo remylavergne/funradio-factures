@@ -14,7 +14,7 @@ MAIS, mon but ici est d'apprendre des choses, et donc, monter en compétences:
 
 - Apprendre le framework [Ktor](https://ktor.io/), et les paradigmes côté serveurs / frontend
 - Améliorer mes connaissances en **Kotlin**
-- Monter en compétence sur Docker, en *dockerizant* une solution complète, et la rendre facilement déployable en quelques clics
+- Monter en compétence sur Docker, en _dockerizant_ une solution complète, et la rendre facilement déployable en quelques clics
 - Ne pas limiter l'envoi de mail à un seul type de service, et avoir une configuration souple
 - Prendre du plaisir ❤️
 
@@ -35,3 +35,63 @@ MAIS, mon but ici est d'apprendre des choses, et donc, monter en compétences:
 - `SMTP_PASSWORD`: Mot de passe de connexion
 
 Un script est disponible pour utiliser utiliser les variables d'environnement. Il sera remplacé à terme par un fichier `.env` plus général pour le _docker-compose_ et le serveur en lui-même.
+
+## Endpoints
+
+### Créer un nouvel email (informations obligatoires)
+
+```http
+POST /upload HTTP/1.1
+Host: localhost:8080
+Content-Type: multipart/form-data; boundary=--------------------------423360379973048303416585
+
+----WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="receiverEmail"
+
+test
+----WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="mailTitle"
+
+title
+----WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="mailBody"
+
+body
+----WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="repeat"
+
+0
+----WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="delayMillis"
+
+10000
+----WebKitFormBoundary7MA4YWxkTrZu0gW
+```
+
+```http
+Email with id f4528697-9a71-468a-9e13-9a7abd2d36b7 has been created.
+```
+
+### Lancer l'envoi automatique de cet email
+
+```http
+POST http://localhost:8080/scheduling
+Content-Type: application/json
+
+{
+    "start": true,
+    "emailId": "f4528697-9a71-468a-9e13-9a7abd2d36b7"
+}
+```
+
+### Arrêter l'envoi automatique de cet email
+
+```http
+POST http://localhost:8080/scheduling
+Content-Type: application/json
+
+{
+    "start": false,
+    "emailId": "f4528697-9a71-468a-9e13-9a7abd2d36b7"
+}
+```

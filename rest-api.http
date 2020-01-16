@@ -1,9 +1,19 @@
+### Start a job 
 POST http://localhost:8080/scheduling
 Content-Type: application/json
 
 {
     "start": true,
-    "emailId": "123cd29c-97b0-45ee-a13d-6eda940854aa"
+    "emailId": "34bfc925-be7d-428a-b97d-d8b767a27541"
+}
+
+### Stop a job 
+POST http://localhost:8080/scheduling
+Content-Type: application/json
+
+{
+    "start": false,
+    "emailId": "34bfc925-be7d-428a-b97d-d8b767a27541"
 }
 
 ###
