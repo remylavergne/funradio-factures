@@ -1,6 +1,6 @@
 package dev.remylavergne.models.dto
 
-data class EmailInformations(
+data class EmailDto(
     var receiverEmail: String = "",
     var mailTitle: String = "",
     var mailBody: String = "",

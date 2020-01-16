@@ -3,7 +3,7 @@ package dev.remylavergne.routing
 import dev.remylavergne.Database
 import dev.remylavergne.Create
 import dev.remylavergne.models.Email
-import dev.remylavergne.models.dto.EmailInformations
+import dev.remylavergne.models.dto.EmailDto
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.PartData
@@ -35,7 +35,7 @@ fun Route.create(uploadDir: File) {
 
         val multipart = call.receiveMultipart()
         var attachmentFile: File? = null
-        val emailInformations = EmailInformations()
+        val emailInformations = EmailDto()
 
         // Processes each part of the multipart input content of the user
         multipart.forEachPart { part ->
@@ -79,15 +79,15 @@ fun Route.create(uploadDir: File) {
 /**
  * Make final object to persist all informations locally
  * @param fileUploaded the file uploaded by end user
- * @param informations object who hold mandatories informations to use the service
+ * @param dto object who hold mandatories informations to use the service
  */
-private fun persistInformations(informations: EmailInformations, fileUploaded: File? = null) {
+private fun persistInformations(dto: EmailDto, fileUploaded: File? = null) {
     try {
         Database.persist(
             Email(
-                receiverEmail = informations.receiverEmail,
-                mailTitle = informations.mailTitle,
-                mailBody = informations.mailBody,
+                receiverEmail = dto.receiverEmail,
+                mailTitle = dto.mailTitle,
+                mailBody = dto.mailBody,
                 fileName = fileUploaded?.name,
                 createdAt = System.currentTimeMillis()
             )
