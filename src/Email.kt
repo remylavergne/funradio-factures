@@ -38,7 +38,7 @@ object Email {
         mailer
     }
 
-    fun createEmail() {
+    fun send() {
 
     }
 }

@@ -1,6 +1,8 @@
-package dev.remylavergne
+package dev.remylavergne.routing
 
-import dev.remylavergne.models.Facture
+import dev.remylavergne.Database
+import dev.remylavergne.Create
+import dev.remylavergne.models.Email
 import dev.remylavergne.models.dto.EmailInformations
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
@@ -21,15 +23,15 @@ import java.io.InputStream
 import java.io.OutputStream
 
 /**
- * Register [Upload] routes.
+ * Register [Create] routes.
  */
 @KtorExperimentalLocationsAPI
-fun Route.upload(uploadDir: File) {
+fun Route.create(uploadDir: File) {
 
     /**
-     * Registers a POST route for [Upload]
+     * Registers a POST route for [Create]
      */
-    post<Upload> {
+    post<Create> {
 
         val multipart = call.receiveMultipart()
         var attachmentFile: File? = null
@@ -44,6 +46,8 @@ fun Route.upload(uploadDir: File) {
                         "receiverEmail" -> emailInformations.receiverEmail = part.value
                         "mailTitle" -> emailInformations.mailTitle = part.value
                         "mailBody" -> emailInformations.mailBody = part.value
+                        "repeat" -> emailInformations.repeat = part.value.toLong()
+                        "delayMillis" -> emailInformations.delayMillis = part.value.toLong()
                     }
                 }
                 is PartData.FileItem -> {
@@ -62,11 +66,11 @@ fun Route.upload(uploadDir: File) {
         }
 
         // Persist file
-        if (attachmentFile != null && emailInformations.areValid()) {
-            attachmentFile?.let { persistInformations(it, emailInformations) }
-            call.respond(HttpStatusCode.PreconditionFailed, "File well upload")
+        if (emailInformations.areValid()) {
+            persistInformations(emailInformations, attachmentFile)
+            call.respond(HttpStatusCode.OK, "Email created and saved.")
         } else {
-            call.respond(HttpStatusCode.OK, "File upload error")
+            call.respond(HttpStatusCode.NotAcceptable, "File upload error")
         }
     }
 }
@@ -77,15 +81,15 @@ fun Route.upload(uploadDir: File) {
  * @param fileUploaded the file uploaded by end user
  * @param informations object who hold mandatories informations to use the service
  */
-private fun persistInformations(fileUploaded: File, informations: EmailInformations) {
+private fun persistInformations(informations: EmailInformations, fileUploaded: File? = null) {
     try {
         Database.persist(
-            Facture(
+            Email(
                 receiverEmail = informations.receiverEmail,
                 mailTitle = informations.mailTitle,
                 mailBody = informations.mailBody,
-                fileName = fileUploaded.name,
-                fileAdded = System.currentTimeMillis()
+                fileName = fileUploaded?.name,
+                createdAt = System.currentTimeMillis()
             )
         )
     } catch (e: Exception) {

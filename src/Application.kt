@@ -1,8 +1,11 @@
 package dev.remylavergne
 
+import dev.remylavergne.routing.scheduling
+import dev.remylavergne.routing.create
 import io.ktor.application.Application
 import io.ktor.application.ApplicationEnvironment
 import io.ktor.application.install
+import io.ktor.application.log
 import io.ktor.features.*
 import io.ktor.gson.gson
 import io.ktor.http.ContentType
@@ -10,6 +13,7 @@ import io.ktor.locations.KtorExperimentalLocationsAPI
 import io.ktor.locations.Location
 import io.ktor.locations.Locations
 import io.ktor.routing.routing
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.io.errors.IOException
 import java.io.File
 
@@ -19,9 +23,22 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
  * Location for uploading files.
  */
 @KtorExperimentalLocationsAPI
-@Location("/upload")
-class Upload()
+@Location("/create") // TODO: rename /attachments/create
+class Create()
 
+@KtorExperimentalLocationsAPI
+@Location("/scheduling")
+class Scheduling()
+
+@KtorExperimentalLocationsAPI
+@Location("/attachments") // Get all
+class Attachment()
+
+@KtorExperimentalLocationsAPI
+@Location("/attachments/{id}/delete")
+class AttachmentDelete(val id: List<String>)
+
+@InternalCoroutinesApi
 @KtorExperimentalLocationsAPI
 @Suppress("unused") // Referenced in application.conf
 @kotlin.jvm.JvmOverloads
@@ -56,7 +73,9 @@ fun Application.module(testing: Boolean = false) {
     val uploadDir = createUploadDirectory(environment)
 
     routing {
-        upload(uploadDir)
+        trace { application.log.warn(it.buildText()) }
+        create(uploadDir)
+        scheduling()
     }
 }
 
