@@ -39,6 +39,7 @@ Un script est disponible pour utiliser utiliser les variables d'environnement. I
 ## 👩‍💻 Comment utiliser l'application
 
 Cette application peut s'utiliser via des appels REST ([REST Client pour VS Code](https://github.com/Huachao/vscode-restclient/releases))
+
 Une interface web est en développement pour faciliter son utilisation.
 
 ### Les basiques
