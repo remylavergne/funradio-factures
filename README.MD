@@ -36,7 +36,12 @@ MAIS, mon but ici est d'apprendre des choses, et donc, monter en compétences:
 
 Un script est disponible pour utiliser utiliser les variables d'environnement. Il sera remplacé à terme par un fichier `.env` plus général pour le _docker-compose_ et le serveur en lui-même.
 
-## Endpoints
+## Comment utiliser l'application
+
+Cette application peut s'utiliser via des appels REST.
+Une interface web est en développement pour faciliter son utilisation.
+
+### Les basiques
 
 ### Créer un nouvel email (informations obligatoires)
 
