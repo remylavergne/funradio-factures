@@ -10,7 +10,9 @@ import io.ktor.locations.post
 import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.routing.Route
+import kotlinx.coroutines.InternalCoroutinesApi
 
+@InternalCoroutinesApi
 @KtorExperimentalLocationsAPI
 fun Route.scheduling() {
 
@@ -31,7 +33,6 @@ fun Route.scheduling() {
         SchedulingService.schedule(listOf(schedulerDto))
 
         call.respond("Jobs started !")
-
     }
 
 }

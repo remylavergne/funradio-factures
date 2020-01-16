@@ -3,13 +3,11 @@ package dev.remylavergne.services
 import dev.remylavergne.Database
 import dev.remylavergne.models.Email
 import dev.remylavergne.models.dto.SchedulerDto
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 object SchedulingService {
 
-    private val jobsRunningInstances: MutableList<Email> = mutableListOf()
+    private val jobsRunningInstances: MutableMap<Job, Email> = mutableMapOf()
 
     private fun startCoroutineTimer(delayMillis: Long, repeatMillis: Long, action: () -> Unit) =
         GlobalScope.launch {
@@ -25,6 +23,7 @@ object SchedulingService {
         }
 
     // TODO: Make this with Coroutines and wait for all jobs done
+    @InternalCoroutinesApi
     fun schedule(jobs: List<SchedulerDto>) {
         jobs.forEach { schedule ->
             if (schedule.start) {
@@ -35,7 +34,7 @@ object SchedulingService {
         }
     }
 
-    fun getAllCurrentJobs(): List<Email> {
+    fun getAllCurrentJobs(): Map<Job, Email> {
         return this.jobsRunningInstances
     }
 
@@ -51,24 +50,28 @@ object SchedulingService {
             // Send the mail
             println("Simulated => Mail sent")
         }
-        // Save current job
-        emailById.addJob(jobPrepared)
         // Save instance email running
-        this.jobsRunningInstances.add(emailById)
+        this.jobsRunningInstances[jobPrepared] = emailById
     }
 
+    @InternalCoroutinesApi
     private fun stop(job: SchedulerDto) {
         // Find email running to stop
-        val emailFound = this.jobsRunningInstances.find { email ->
+        val emailsFound = this.jobsRunningInstances.filter { (_, email) ->
             email.id == job.emailId
         }
+        // Stop all jobs founds
+        emailsFound.forEach { (job, email) ->
+            cancelJob(job)
+            removeJobCanceled(job)
+        }
+    }
 
-        emailFound?.let {
-            // Stop running
-            it.deleteCurrentJob()
-            // Delete instance job
-            this.jobsRunningInstances.remove(it)
-        } ?: throw Exception("The mail ${job.emailId} doesn't exist in jobs running instances")
+    private fun cancelJob(job: Job) {
+        job.cancel()
+    }
 
+    private fun removeJobCanceled(job: Job) {
+        jobsRunningInstances.remove(job)
     }
 }
