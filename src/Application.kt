@@ -13,6 +13,7 @@ import io.ktor.locations.KtorExperimentalLocationsAPI
 import io.ktor.locations.Location
 import io.ktor.locations.Locations
 import io.ktor.routing.routing
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.io.errors.IOException
 import java.io.File
 
@@ -37,6 +38,7 @@ class Attachment()
 @Location("/attachments/{id}/delete")
 class AttachmentDelete(val id: List<String>)
 
+@InternalCoroutinesApi
 @KtorExperimentalLocationsAPI
 @Suppress("unused") // Referenced in application.conf
 @kotlin.jvm.JvmOverloads
