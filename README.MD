@@ -42,8 +42,6 @@ Cette application peut s'utiliser via des appels REST ([REST Client pour VS Code
 
 Une interface web est en développement pour faciliter son utilisation.
 
-### Les basiques
-
 ### Créer un nouvel email (informations obligatoires)
 
 ```http
