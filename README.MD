@@ -4,7 +4,7 @@ Envoyez périodiquement, et facilement, vos factures à **Fun Radio** pour augme
 
 ## ❓Contexte
 
-OUI, des solutions d'envoi de mails récurrants existent déjà (quelques exemples, pour la plupart payantes):
+OUI, des solutions d'envoi de mails récurrents existent déjà (quelques exemples, pour la plupart payantes):
 
 - [Boomerang for Gmail](https://www.boomeranggmail.com/l/how-to-send-recurring-emails.html)
 - [rightinbox](https://www.rightinbox.com/features/recurring-emails)
