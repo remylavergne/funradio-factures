@@ -1,7 +1,7 @@
 package dev.remylavergne
 
 import dev.remylavergne.routing.scheduling
-import dev.remylavergne.routing.upload
+import dev.remylavergne.routing.create
 import io.ktor.application.Application
 import io.ktor.application.ApplicationEnvironment
 import io.ktor.application.install
@@ -23,8 +23,8 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
  * Location for uploading files.
  */
 @KtorExperimentalLocationsAPI
-@Location("/upload") // TODO: rename /attachments/create
-class Upload()
+@Location("/create") // TODO: rename /attachments/create
+class Create()
 
 @KtorExperimentalLocationsAPI
 @Location("/scheduling")
@@ -74,7 +74,7 @@ fun Application.module(testing: Boolean = false) {
 
     routing {
         trace { application.log.warn(it.buildText()) }
-        upload(uploadDir)
+        create(uploadDir)
         scheduling()
     }
 }

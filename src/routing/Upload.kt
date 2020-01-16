@@ -1,7 +1,7 @@
 package dev.remylavergne.routing
 
 import dev.remylavergne.Database
-import dev.remylavergne.Upload
+import dev.remylavergne.Create
 import dev.remylavergne.models.Email
 import dev.remylavergne.models.dto.EmailInformations
 import io.ktor.application.call
@@ -23,15 +23,15 @@ import java.io.InputStream
 import java.io.OutputStream
 
 /**
- * Register [Upload] routes.
+ * Register [Create] routes.
  */
 @KtorExperimentalLocationsAPI
-fun Route.upload(uploadDir: File) {
+fun Route.create(uploadDir: File) {
 
     /**
-     * Registers a POST route for [Upload]
+     * Registers a POST route for [Create]
      */
-    post<Upload> {
+    post<Create> {
 
         val multipart = call.receiveMultipart()
         var attachmentFile: File? = null
