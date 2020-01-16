@@ -11,7 +11,7 @@ object SchedulingService {
 
     private val jobsRunningInstances: MutableList<Email> = mutableListOf()
 
-    private fun startCoroutineTimer(delayMillis: Long = 0, repeatMillis: Long = 0, action: () -> Unit) =
+    private fun startCoroutineTimer(delayMillis: Long, repeatMillis: Long, action: () -> Unit) =
         GlobalScope.launch {
             delay(delayMillis)
             if (repeatMillis > 0) {
@@ -47,12 +47,12 @@ object SchedulingService {
         // Create Email
         val emailById = Database.getEmailById(job.emailId)
         // Create Job
-        val job = startCoroutineTimer(emailById.delayMillis, emailById.repeat) {
+        val jobPrepared = startCoroutineTimer(emailById.delayMillis, emailById.repeat) {
             // Send the mail
-
+            println("Simulated => Mail sent")
         }
         // Save current job
-        emailById.addJob(job)
+        emailById.addJob(jobPrepared)
         // Save instance email running
         this.jobsRunningInstances.add(emailById)
     }

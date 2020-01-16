@@ -14,7 +14,7 @@ data class Email(
     var createdAt: Long,
     var active: Boolean = true,
     var delayMillis: Long = 10000, // Every 10 seconds
-    var repeat: Long = 0, // Default: Unlimited
+    var repeat: Long = 10000, // Default: 10 seconds
     private var job: Job? = null
 ) {
     @Throws(Exception::class)
