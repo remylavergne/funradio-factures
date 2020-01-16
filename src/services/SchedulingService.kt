@@ -4,13 +4,12 @@ import dev.remylavergne.Database
 import dev.remylavergne.models.Email
 import dev.remylavergne.models.dto.SchedulerDto
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 object SchedulingService {
 
-    private val jobsRunning: List<Email> = emptyList()
+    private val jobsRunningInstances: MutableList<Email> = mutableListOf()
 
     private fun startCoroutineTimer(delayMillis: Long = 0, repeatMillis: Long = 0, action: () -> Unit) =
         GlobalScope.launch {
@@ -37,7 +36,7 @@ object SchedulingService {
     }
 
     fun getAllCurrentJobs(): List<Email> {
-        return this.jobsRunning
+        return this.jobsRunningInstances
     }
 
     /**
@@ -47,11 +46,29 @@ object SchedulingService {
     private fun start(job: SchedulerDto) {
         // Create Email
         val emailById = Database.getEmailById(job.emailId)
+        // Create Job
+        val job = startCoroutineTimer(emailById.delayMillis, emailById.repeat) {
+            // Send the mail
 
-        println()
+        }
+        // Save current job
+        emailById.addJob(job)
+        // Save instance email running
+        this.jobsRunningInstances.add(emailById)
     }
 
     private fun stop(job: SchedulerDto) {
+        // Find email running to stop
+        val emailFound = this.jobsRunningInstances.find { email ->
+            email.id == job.emailId
+        }
+
+        emailFound?.let {
+            // Stop running
+            it.deleteCurrentJob()
+            // Delete instance job
+            this.jobsRunningInstances.remove(it)
+        } ?: throw Exception("The mail ${job.emailId} doesn't exist in jobs running instances")
 
     }
 }

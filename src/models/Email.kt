@@ -1,5 +1,7 @@
 package dev.remylavergne.models
 
+import kotlinx.coroutines.CompletionHandler
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.Job
 import java.util.*
 
@@ -25,7 +27,20 @@ data class Email(
         this.job = job
     }
 
-    fun deleteJob(job: Job) {
-        this.job = null
+    @UseExperimental(InternalCoroutinesApi::class)
+    fun deleteCurrentJob() {
+        this.job?.let { currentJob ->
+            currentJob.invokeOnCompletion(
+                onCancelling = true,
+                invokeImmediately = true,
+                handler = object : CompletionHandler {
+                    override fun invoke(cause: Throwable?) {
+                        println("Job for Email id $id is cancelled.")
+                    }
+
+                })
+            // Delete job inside object
+            this.job = null
+        }
     }
 }
