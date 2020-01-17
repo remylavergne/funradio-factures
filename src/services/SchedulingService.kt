@@ -2,6 +2,7 @@ package dev.remylavergne.services
 
 import dev.remylavergne.Database
 import dev.remylavergne.models.Email
+import dev.remylavergne.models.ScheduleEmail
 import dev.remylavergne.models.dto.SchedulerDto
 import kotlinx.coroutines.*
 
@@ -46,9 +47,9 @@ object SchedulingService {
         // Create Email
         val emailById = Database.getEmailById(job.emailId)
         // Create Job
-        val jobPrepared = startCoroutineTimer(emailById.delayMillis, emailById.repeat) {
-            // Send the mail
-            println("Simulated => Mail sent")
+        val jobPrepared = startCoroutineTimer(emailById.delayMillis, emailById.repeatEvery) {
+            // Create a new email to schedule
+            ScheduleEmail(emailById)
         }
         // Save instance email running
         this.jobsRunningInstances[jobPrepared] = emailById
@@ -61,7 +62,7 @@ object SchedulingService {
             email.id == job.emailId
         }
         // Stop all jobs founds
-        emailsFound.forEach { (job, email) ->
+        emailsFound.forEach { (job, _) ->
             cancelJob(job)
             removeJobCanceled(job)
         }

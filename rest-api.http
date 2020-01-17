@@ -23,7 +23,19 @@ Host: localhost:8080
 Content-Type: multipart/form-data; boundary=--------------------------423360379973048303416585
 
 ----WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="receiverName"
+
+test
+----WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="receiverEmail"
+
+test
+----WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="senderName"
+
+test
+----WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="senderEmail"
 
 test
 ----WebKitFormBoundary7MA4YWxkTrZu0gW
@@ -35,7 +47,7 @@ Content-Disposition: form-data; name="mailBody"
 
 body
 ----WebKitFormBoundary7MA4YWxkTrZu0gW
-Content-Disposition: form-data; name="repeat"
+Content-Disposition: form-data; name="repeatEvery"
 
 0
 ----WebKitFormBoundary7MA4YWxkTrZu0gW
