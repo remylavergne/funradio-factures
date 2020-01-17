@@ -23,7 +23,10 @@ object SchedulingService {
             }
         }
 
-    // TODO: Make this with Coroutines and wait for all jobs done
+    /**
+     * Receive a list of actions to start, or stop email scheduling
+     * @param jobs email list to process
+     */
     @InternalCoroutinesApi
     fun schedule(jobs: List<SchedulerDto>) {
         jobs.forEach { schedule ->
@@ -35,21 +38,20 @@ object SchedulingService {
         }
     }
 
-    fun getAllCurrentJobs(): MutableCollection<Email> {
-        return this.jobsRunningInstances.values
-    }
+    fun getAllCurrentJobs(): MutableCollection<Email> = this.jobsRunningInstances.values
 
     /**
-     *
+     * Start a new email scheduling
+     * The mail is scheduled until a user end specific action
+     * @param job minimums informations to scheduled an email
      */
-
     private fun start(job: SchedulerDto) {
         // Create Email
         val emailById = Database.getEmailById(job.emailId)
         // Create Job
         val jobPrepared = startCoroutineTimer(emailById.delayMillis, emailById.repeatEvery) {
             // Create a new email to schedule
-            // TODO: ScheduleEmail(emailById) reactivate in prod
+            ScheduleEmail(emailById)
         }
         // Save instance email running
         this.jobsRunningInstances[jobPrepared] = emailById
@@ -57,6 +59,10 @@ object SchedulingService {
         Database.isEmailScheduled(emailById, true)
     }
 
+    /**
+     * Stop a current job / email running
+     * @param job minimums informations to stop a the current job link to email
+     */
     @InternalCoroutinesApi
     private fun stop(job: SchedulerDto) {
         // Find email running to stop
@@ -72,10 +78,19 @@ object SchedulingService {
         }
     }
 
+    /**
+     * Cancel a specific running job
+     * @param job job to stop
+     */
     private fun cancelJob(job: Job) {
         job.cancel()
     }
 
+    /**
+     * Remove a specific job, after that was cancel
+     * @param job job to remove from running jobs instance
+     * @see cancelJob method to cancel a job, before to remove it
+     */
     private fun removeJobCanceled(job: Job) {
         jobsRunningInstances.remove(job)
     }
