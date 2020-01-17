@@ -34,6 +34,12 @@ MAIS, mon but ici est d'apprendre des choses, et donc, monter en compétences:
 - `SMTP_USER`: Nom d'utilisateur
 - `SMTP_PASSWORD`: Mot de passe de connexion
 
+Pour exporter une variable d'environnement :
+
+```
+export MONGO_USERNAME=remy
+```
+
 Un script est disponible pour utiliser utiliser les variables d'environnement. Il sera remplacé à terme par un fichier `.env` plus général pour le _docker-compose_ et le serveur en lui-même.
 
 ## 👩‍💻 Comment utiliser l'application
