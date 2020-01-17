@@ -45,14 +45,14 @@ Une interface web est en développement pour faciliter son utilisation.
 ### Créer un nouvel email (informations obligatoires)
 
 ```http
-POST /upload HTTP/1.1
+POST /create HTTP/1.1
 Host: localhost:8080
-Content-Type: multipart/form-data; boundary=--------------------------423360379973048303416585
+Content-Type: multipart/form-data; boundary=--------------------------011705091029995234177780
 
 ----WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="receiverEmail"
 
-test
+example@gmail.com
 ----WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="mailTitle"
 
@@ -62,14 +62,27 @@ Content-Disposition: form-data; name="mailBody"
 
 body
 ----WebKitFormBoundary7MA4YWxkTrZu0gW
-Content-Disposition: form-data; name="repeat"
+Content-Disposition: form-data; name="repeatEvery"
 
-0
+10000
 ----WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="delayMillis"
 
 10000
 ----WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="receiverName"
+
+Rémy Lavergne
+----WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="senderName"
+
+Spotfinder
+----WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="senderEmail"
+
+example@gmail.com
+----WebKitFormBoundary7MA4YWxkTrZu0gW
+
 ```
 
 ```http
