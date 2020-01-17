@@ -4,12 +4,13 @@ import java.util.*
 
 data class Email(
     val id: String = UUID.randomUUID().toString(),
-    var receiverEmail: String,
-    var mailTitle: String? = null,
-    var mailBody: String,
-    var fileName: String?,
+    var receiver: MailReceiver,
+    var sender: MailSender,
+    var title: String,
+    var body: String,
+    var attachmentName: String?,
     var createdAt: Long,
-    var active: Boolean = true,
+    var active: Boolean = false,
     var delayMillis: Long = 10000, // Every 10 seconds
-    var repeat: Long = 10000// Default: 10 seconds
+    var repeatEvery: Long = 10000// Default: 10 seconds
 )

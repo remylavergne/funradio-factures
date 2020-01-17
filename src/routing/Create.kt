@@ -3,7 +3,8 @@ package dev.remylavergne.routing
 import dev.remylavergne.Create
 import dev.remylavergne.Database
 import dev.remylavergne.models.Email
-import dev.remylavergne.models.dto.EmailDto
+import dev.remylavergne.models.MailReceiver
+import dev.remylavergne.models.MailSender
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.PartData
@@ -22,6 +23,15 @@ import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
 
+private const val RECEIVER_NAME = "receiverName"
+private const val RECEIVER_EMAIL = "receiverEmail"
+private const val SENDER_NAME = "senderName"
+private const val SENDER_EMAIL = "senderEmail"
+private const val MAIL_TITLE = "mailTitle"
+private const val MAIL_BODY = "mailBody"
+private const val REPEAT_EVERY = "repeatEvery"
+private const val DELAY = "delayMillis"
+
 /**
  * Register [Create] routes.
  */
@@ -35,7 +45,7 @@ fun Route.create(uploadDir: File) {
 
         val multipart = call.receiveMultipart()
         var attachmentFile: File? = null
-        val emailInformations = EmailDto()
+        val informations = mutableMapOf<String, String>()
 
         // Processes each part of the multipart input content of the user
         multipart.forEachPart { part ->
@@ -43,11 +53,14 @@ fun Route.create(uploadDir: File) {
             when (part) {
                 is PartData.FormItem -> {
                     when (part.name) {
-                        "receiverEmail" -> emailInformations.receiverEmail = part.value
-                        "mailTitle" -> emailInformations.mailTitle = part.value
-                        "mailBody" -> emailInformations.mailBody = part.value
-                        "repeat" -> emailInformations.repeat = part.value.toLong()
-                        "delayMillis" -> emailInformations.delayMillis = part.value.toLong()
+                        RECEIVER_NAME -> informations[RECEIVER_NAME] = part.value
+                        RECEIVER_EMAIL -> informations[RECEIVER_EMAIL] = part.value
+                        SENDER_NAME -> informations[SENDER_NAME] = part.value
+                        SENDER_EMAIL -> informations[SENDER_EMAIL] = part.value
+                        MAIL_TITLE -> informations[MAIL_TITLE] = part.value
+                        MAIL_BODY -> informations[MAIL_BODY] = part.value
+                        REPEAT_EVERY -> informations[REPEAT_EVERY] = part.value
+                        DELAY -> informations[DELAY] = part.value
                     }
                 }
                 is PartData.FileItem -> {
@@ -66,8 +79,8 @@ fun Route.create(uploadDir: File) {
         }
 
         // Persist file
-        if (emailInformations.areValid()) {
-            val id = persistInformations(emailInformations, attachmentFile)
+        if (requiredInformationsReceived(informations)) {
+            val id = persistInformations(informations, attachmentFile)
             call.respond(HttpStatusCode.OK, "Email with id $id has been created.")
         } else {
             call.respond(HttpStatusCode.NotAcceptable, "File upload error")
@@ -75,22 +88,29 @@ fun Route.create(uploadDir: File) {
     }
 }
 
+private fun requiredInformationsReceived(informations: MutableMap<String, String>) = informations.size == 8
+
 
 /**
  * Make final object to persist all informations locally
  * @param fileUploaded the file uploaded by end user
  * @param dto object who hold mandatories informations to use the service
  */
-private fun persistInformations(dto: EmailDto, fileUploaded: File? = null): String {
+private fun persistInformations(informations: MutableMap<String, String>, fileUploaded: File? = null): String {
     var id = ""
 
     try {
+        val receiver = MailReceiver(name = informations[RECEIVER_NAME]!!, email = informations[RECEIVER_EMAIL]!!)
+        val sender = MailSender(name = informations[SENDER_NAME]!!, email = informations[SENDER_EMAIL]!!)
         val newEmail = Email(
-            receiverEmail = dto.receiverEmail,
-            mailTitle = dto.mailTitle,
-            mailBody = dto.mailBody,
-            fileName = fileUploaded?.name,
-            createdAt = System.currentTimeMillis()
+            receiver = receiver,
+            sender = sender,
+            title = informations[MAIL_TITLE]!!,
+            body = informations[MAIL_BODY]!!,
+            attachmentName = fileUploaded?.name,
+            createdAt = System.currentTimeMillis(),
+            delayMillis = informations[DELAY]?.toLong()!!,
+            repeatEvery = informations[REPEAT_EVERY]?.toLong()!!
         )
 
         Database.persist(newEmail)
