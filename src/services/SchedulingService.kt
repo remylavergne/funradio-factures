@@ -49,7 +49,7 @@ object SchedulingService {
         // Create Job
         val jobPrepared = startCoroutineTimer(emailById.delayMillis, emailById.repeatEvery) {
             // Create a new email to schedule
-            ScheduleEmail(emailById)
+            // TODO: ScheduleEmail(emailById) reactivate in prod
         }
         // Save instance email running
         this.jobsRunningInstances[jobPrepared] = emailById

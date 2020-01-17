@@ -4,7 +4,6 @@ import com.mongodb.MongoClient
 import com.mongodb.MongoClientURI
 import com.mongodb.client.MongoCollection
 import com.mongodb.client.MongoDatabase
-import com.mongodb.client.model.UpdateOptions
 import dev.remylavergne.models.Email
 import org.litote.kmongo.*
 
@@ -40,9 +39,13 @@ object Database {
         } ?: throw Exception("Email id $id not found !")
     }
 
+    /**
+     * Change the state of an email.
+     * The email field "active" is used to know if it scheduled, or not.
+     * @param emailById the current email needs to be update
+     * @param state the new state (e.g. true == scheduled)
+     */
     fun isEmailScheduled(emailById: Email, state: Boolean) {
-        this.collection.updateOne(Email::id eq emailById.id, "{\$set:$state}")
+        this.collection.updateOne(Email::id eq emailById.id, Email::active setTo state)
     }
-
-
 }
