@@ -35,8 +35,8 @@ object SchedulingService {
         }
     }
 
-    fun getAllCurrentJobs(): Map<Job, Email> {
-        return this.jobsRunningInstances
+    fun getAllCurrentJobs(): MutableCollection<Email> {
+        return this.jobsRunningInstances.values
     }
 
     /**

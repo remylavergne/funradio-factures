@@ -112,3 +112,36 @@ Content-Type: application/json
     "emailId": "f4528697-9a71-468a-9e13-9a7abd2d36b7"
 }
 ```
+
+### Voir tous les mails actifs
+
+```http
+GET /scheduling HTTP/1.1
+Host: localhost:8080
+```
+
+Réponse:
+
+```json
+[
+  {
+    "id": "5fb91ec6-a922-422c-840c-709958aa2b85",
+    "receiver": {
+      "id": "2da5a8ad-9228-4586-bc9c-57839d78140d",
+      "name": "Rémy Lavergne",
+      "email": "example@gmail.com"
+    },
+    "sender": {
+      "id": "7ca785de-d8f3-430b-9243-08feb8d507a4",
+      "name": "Spotfinder",
+      "email": "example@gmail.com"
+    },
+    "title": "title",
+    "body": "body",
+    "createdAt": 1579292547631,
+    "active": true,
+    "delayMillis": 10000,
+    "repeatEvery": 10000
+  }
+]
+```

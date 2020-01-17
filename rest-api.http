@@ -1,22 +1,4 @@
-### Start a job 
-POST http://localhost:8080/scheduling
-Content-Type: application/json
-
-{
-    "start": true,
-    "emailId": "34bfc925-be7d-428a-b97d-d8b767a27541"
-}
-
-### Stop a job 
-POST http://localhost:8080/scheduling
-Content-Type: application/json
-
-{
-    "start": false,
-    "emailId": "34bfc925-be7d-428a-b97d-d8b767a27541"
-}
-
-###
+### Create a new email in database
 
 POST /upload HTTP/1.1
 Host: localhost:8080
@@ -55,3 +37,26 @@ Content-Disposition: form-data; name="delayMillis"
 
 10000
 ----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+### Start a job 
+POST http://localhost:8080/scheduling
+Content-Type: application/json
+
+{
+    "start": true,
+    "emailId": "5fb91ec6-a922-422c-840c-709958aa2b85"
+}
+
+### Stop a job 
+POST http://localhost:8080/scheduling
+Content-Type: application/json
+
+{
+    "start": false,
+    "emailId": "cff4deaf-e231-48cd-9d4b-b219104c6175"
+}
+
+### Get all current jobs running
+GET http://localhost:8080/scheduling
+Content-Type: application/json
+
