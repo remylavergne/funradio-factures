@@ -53,6 +53,8 @@ object SchedulingService {
         }
         // Save instance email running
         this.jobsRunningInstances[jobPrepared] = emailById
+        // Persist email state
+        Database.isEmailScheduled(emailById, true)
     }
 
     @InternalCoroutinesApi
@@ -62,9 +64,11 @@ object SchedulingService {
             email.id == job.emailId
         }
         // Stop all jobs founds
-        emailsFound.forEach { (job, _) ->
+        emailsFound.forEach { (job, email) ->
             cancelJob(job)
             removeJobCanceled(job)
+            // Persist email state
+            Database.isEmailScheduled(email, false)
         }
     }
 

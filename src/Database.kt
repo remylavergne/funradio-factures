@@ -4,11 +4,9 @@ import com.mongodb.MongoClient
 import com.mongodb.MongoClientURI
 import com.mongodb.client.MongoCollection
 import com.mongodb.client.MongoDatabase
+import com.mongodb.client.model.UpdateOptions
 import dev.remylavergne.models.Email
-import org.litote.kmongo.KMongo
-import org.litote.kmongo.eq
-import org.litote.kmongo.findOne
-import org.litote.kmongo.getCollection
+import org.litote.kmongo.*
 
 object Database {
 
@@ -40,6 +38,10 @@ object Database {
         email?.let {
             return it
         } ?: throw Exception("Email id $id not found !")
+    }
+
+    fun isEmailScheduled(emailById: Email, state: Boolean) {
+        this.collection.updateOne(Email::id eq emailById.id, "{\$set:$state}")
     }
 
 
