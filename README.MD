@@ -42,6 +42,15 @@ $ chmod +x set_environment_variables.sh && ./set_environment_variables.sh
 // Every environment variables well exported.
 ```
 
+## Lancer l'application (JAR seul pour le moment)
+
+- Télécharger la dernière release stable (JAR) : [https://github.com/remylavergne/funradio-factures/releases](Dernière release)
+- Exécuter le JAR :
+
+```
+$ java -jar factures-{version}-all.jar
+```
+
 ## 👩‍💻 Comment utiliser l'application
 
 Cette application peut s'utiliser via des appels REST ([REST Client pour VS Code](https://github.com/Huachao/vscode-restclient/releases))
