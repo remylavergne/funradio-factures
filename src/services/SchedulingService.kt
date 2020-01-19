@@ -2,13 +2,21 @@ package dev.remylavergne.services
 
 import dev.remylavergne.Database
 import dev.remylavergne.models.Email
-import dev.remylavergne.models.ScheduleEmail
+import dev.remylavergne.models.ScheduledEmail
 import dev.remylavergne.models.dto.SchedulerDto
 import kotlinx.coroutines.*
+import java.io.File
 
 object SchedulingService {
 
+    private lateinit var uploadDir: File
     private val jobsRunningInstances: MutableMap<Job, Email> = mutableMapOf()
+
+    fun init(uploadDir: File) {
+        this.uploadDir = uploadDir
+    }
+
+    fun getUploadDir() = this.uploadDir
 
     private fun startCoroutineTimer(delayMillis: Long, repeatMillis: Long, action: () -> Unit) =
         GlobalScope.launch {
@@ -51,7 +59,7 @@ object SchedulingService {
         // Create Job
         val jobPrepared = startCoroutineTimer(emailById.delayMillis, emailById.repeatEvery) {
             // Create a new email to schedule
-            ScheduleEmail(emailById)
+            ScheduledEmail(emailById)
         }
         // Save instance email running
         this.jobsRunningInstances[jobPrepared] = emailById

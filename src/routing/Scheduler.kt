@@ -19,7 +19,6 @@ fun Route.scheduling() {
     get<Scheduling> {
 
         // Get all current jobs
-        // TODO: Coroutines
         val currentEmailsRunning = SchedulingService.getAllCurrentJobs()
 
         call.respond(currentEmailsRunning)
@@ -29,7 +28,6 @@ fun Route.scheduling() {
 
         val schedulerDto = call.receive<SchedulerDto>()
 
-        // TODO: Implement coroutines
         SchedulingService.schedule(listOf(schedulerDto))
 
         call.respond("Jobs started !")
