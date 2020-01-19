@@ -42,7 +42,7 @@ $ chmod +x set_environment_variables.sh && ./set_environment_variables.sh
 // Every environment variables well exported.
 ```
 
-## Lancer l'application (JAR seul pour le moment)
+## 🏁 Lancer l'application (JAR seul pour le moment)
 
 - Télécharger la dernière release stable (JAR) : [https://github.com/remylavergne/funradio-factures/releases](Dernière release)
 - Exécuter le JAR :
