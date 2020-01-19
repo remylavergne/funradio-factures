@@ -51,6 +51,8 @@ dependencies {
     // MongoDB
     compile 'org.litote.kmongo:kmongo:3.11.2'
 
+    testImplementation "io.mockk:mockk:1.9.3"
+
 }
 
 // This task will generate your fat JAR and put it in the ./build/libs/ directory

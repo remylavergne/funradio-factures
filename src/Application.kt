@@ -1,7 +1,8 @@
 package dev.remylavergne
 
-import dev.remylavergne.routing.scheduling
 import dev.remylavergne.routing.create
+import dev.remylavergne.routing.scheduling
+import dev.remylavergne.services.SchedulingService
 import io.ktor.application.Application
 import io.ktor.application.ApplicationEnvironment
 import io.ktor.application.install
@@ -72,6 +73,8 @@ fun Application.module(testing: Boolean = false) {
 
     val uploadDir = createUploadDirectory(environment)
 
+    SchedulingService.init(uploadDir)
+
     routing {
         trace { application.log.warn(it.buildText()) }
         create(uploadDir)
@@ -88,6 +91,7 @@ private fun createUploadDirectory(environment: ApplicationEnvironment): File {
 
     val uploadDirPath: String = facturesConfig.property("upload.dir").getString()
     val uploadDir = File(uploadDirPath)
+
     if (!uploadDir.mkdirs() && !uploadDir.exists()) {
         throw IOException("Failed to create directory ${uploadDir.absolutePath}")
     }
