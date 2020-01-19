@@ -34,7 +34,13 @@ MAIS, mon but ici est d'apprendre des choses, et donc, monter en compétences:
 - `SMTP_USER`: Nom d'utilisateur
 - `SMTP_PASSWORD`: Mot de passe de connexion
 
-Un script est disponible pour utiliser utiliser les variables d'environnement. Il sera remplacé à terme par un fichier `.env` plus général pour le _docker-compose_ et le serveur en lui-même.
+Pour exporter facilement toutes les variables d'environnement, veuillez utiliser le script à la racine du projet `set_environment_variables.sh` [lien direct](https://github.com/remylavergne/funradio-factures/blob/develop/set_environment_variables.sh) (⚠️ remplir avec vos valeurs avant de l'exécuter) :
+
+```
+$ chmod +x set_environment_variables.sh && ./set_environment_variables.sh
+
+// Every environment variables well exported.
+```
 
 ## 👩‍💻 Comment utiliser l'application
 
