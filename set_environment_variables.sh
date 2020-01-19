@@ -1,7 +1,12 @@
 # MongoDB Configuration
-export MONGO_USERNAME="root"
-export MONGO_PASSWORD="example"
-export MONGO_HOSTNAME="localhost"
-export MONGO_PORT="27017"
+export MONGO_USERNAME=
+export MONGO_PASSWORD=
+export MONGO_HOSTNAME=
+export MONGO_PORT=
+# SMTP credentials
+export SMTP_SERVER=
+export SMTP_USER=
+export SMTP_PASSWORD=
+export SMTP_PORT=
 
-echo "Every environment variables well exported"
+echo "Every environment variables well exported."
