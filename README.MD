@@ -37,7 +37,7 @@ MAIS, mon but ici est d'apprendre des choses, et donc, monter en compétences:
 Pour exporter facilement toutes les variables d'environnement, veuillez utiliser le script à la racine du projet `set_environment_variables.sh` [lien direct](https://github.com/remylavergne/funradio-factures/blob/develop/set_environment_variables.sh) (⚠️ remplir avec vos valeurs avant de l'exécuter) :
 
 ```
-chmod +x set_environment_variables.sh && ./set_environment_variables.sh
+$ chmod +x set_environment_variables.sh && ./set_environment_variables.sh
 
 // Every environment variables well exported.
 ```
