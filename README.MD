@@ -48,7 +48,8 @@ $ chmod +x set_environment_variables.sh && ./set_environment_variables.sh
 - Exécuter le JAR :
 
 ```
-$ java -jar factures-{version}-all.jar
+$ docker-compose up -d // Lance la base de données MongoDB
+$ java -jar factures-{version}-all.jar // Lance le serveur
 ```
 
 ## 👩‍💻 Comment utiliser l'application
