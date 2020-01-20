@@ -19,8 +19,8 @@ class AttachmentRetrieverTest {
     @Test
     fun retrieveExistingFile() {
 
-        val attachmentRetriever = AttachmentRetriever(uploadDir)
-        val fileRetrieve = attachmentRetriever.get(existingFile)
+       // val attachmentRetriever = AttachmentRetriever(uploadDir)
+       // val fileRetrieve = attachmentRetriever.get(existingFile)
 
     }
 }

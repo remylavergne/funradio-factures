@@ -2,13 +2,13 @@ package dev.remylavergne.services
 
 import dev.remylavergne.Database
 import dev.remylavergne.models.Email
-import dev.remylavergne.models.ScheduledEmail
 import dev.remylavergne.models.dto.SchedulerDto
 import kotlinx.coroutines.*
 import java.io.File
 
 object SchedulingService {
 
+    private val ONE_MINUTES = 60_000
     private lateinit var uploadDir: File
     private val jobsRunningInstances: MutableMap<Job, Email> = mutableMapOf()
 
@@ -18,17 +18,22 @@ object SchedulingService {
 
     fun getUploadDir() = this.uploadDir
 
-    private fun startCoroutineTimer(delayMillis: Long, repeatMillis: Long, action: () -> Unit) =
+    private fun startCoroutineTimer(startAt: Long, repeatEvery: Long, stopAt: Long, action: () -> Unit) =
         GlobalScope.launch {
-            delay(delayMillis)
-            if (repeatMillis > 0) {
-                while (true) {
+
+            while (System.currentTimeMillis() < stopAt) {
+
+                val currentTime = System.currentTimeMillis()
+
+                if (currentTime >= startAt) {
                     action()
-                    delay(repeatMillis)
+                    delay(repeatEvery)
+                } else {
+                    // 5 minutes delay before next iteration
+                    delay(ONE_MINUTES * 5L)
                 }
-            } else {
-                action()
             }
+            cancel()
         }
 
     /**
@@ -45,8 +50,9 @@ object SchedulingService {
             }
         }
     }
-
-    fun getAllCurrentJobs(): MutableCollection<Email> = this.jobsRunningInstances.values
+    
+    fun getAllCurrentJobs(): List<Email> =
+        this.jobsRunningInstances.values.filter { it.stopAt < System.currentTimeMillis() }
 
     /**
      * Start a new email scheduling
@@ -57,9 +63,14 @@ object SchedulingService {
         // Create Email
         val emailById = Database.getEmailById(job.emailId)
         // Create Job
-        val jobPrepared = startCoroutineTimer(emailById.delayMillis, emailById.repeatEvery) {
+        val jobPrepared = startCoroutineTimer(
+            startAt = emailById.startAt,
+            repeatEvery = emailById.repeatEvery,
+            stopAt = emailById.stopAt
+        ) {
             // Create a new email to schedule
-            ScheduledEmail(emailById)
+            // ScheduledEmail(emailById)
+            println("Mail sent")
         }
         // Save instance email running
         this.jobsRunningInstances[jobPrepared] = emailById

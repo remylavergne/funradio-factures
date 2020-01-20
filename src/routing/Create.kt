@@ -30,7 +30,8 @@ private const val SENDER_EMAIL = "senderEmail"
 private const val MAIL_TITLE = "mailTitle"
 private const val MAIL_BODY = "mailBody"
 private const val REPEAT_EVERY = "repeatEvery"
-private const val DELAY = "delayMillis"
+private const val START_AT = "startAt"
+private const val STOP_AT = "stopAt"
 
 /**
  * Register [Create] routes.
@@ -60,7 +61,8 @@ fun Route.create(uploadDir: File) {
                         MAIL_TITLE -> informations[MAIL_TITLE] = part.value
                         MAIL_BODY -> informations[MAIL_BODY] = part.value
                         REPEAT_EVERY -> informations[REPEAT_EVERY] = part.value
-                        DELAY -> informations[DELAY] = part.value
+                        START_AT -> informations[START_AT] = part.value
+                        STOP_AT -> informations[STOP_AT] = part.value
                     }
                 }
                 is PartData.FileItem -> {
@@ -88,7 +90,7 @@ fun Route.create(uploadDir: File) {
     }
 }
 
-private fun requiredInformationsReceived(informations: MutableMap<String, String>) = informations.size == 8
+private fun requiredInformationsReceived(informations: MutableMap<String, String>) = informations.size == 9
 
 
 /**
@@ -109,8 +111,9 @@ private fun persistInformations(informations: MutableMap<String, String>, fileUp
             body = informations[MAIL_BODY]!!,
             attachmentName = fileUploaded?.name,
             createdAt = System.currentTimeMillis(),
-            delayMillis = informations[DELAY]?.toLong()!!,
-            repeatEvery = informations[REPEAT_EVERY]?.toLong()!!
+            startAt = informations[START_AT]?.toLong()!!,
+            repeatEvery = informations[REPEAT_EVERY]?.toLong()!!,
+            stopAt = informations[STOP_AT]?.toLong()!!
         )
 
         Database.persist(newEmail)
