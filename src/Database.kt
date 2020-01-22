@@ -5,13 +5,14 @@ import com.mongodb.MongoClientURI
 import com.mongodb.client.MongoCollection
 import com.mongodb.client.MongoDatabase
 import dev.remylavergne.models.Email
+import dev.remylavergne.models.SmtpDetails
 import org.litote.kmongo.*
 
 object Database {
 
-    lateinit var client: MongoClient
-    lateinit var database: MongoDatabase
-    lateinit var collection: MongoCollection<Email>
+    private lateinit var client: MongoClient
+    private lateinit var database: MongoDatabase
+    private lateinit var collection: MongoCollection<Email>
 
     private val uri =
         MongoClientURI("mongodb://${EnvironmentVariables.mongoUsername}:${EnvironmentVariables.mongoPassword}@${EnvironmentVariables.mongoHostname}:${EnvironmentVariables.mongoPort}")
@@ -47,5 +48,9 @@ object Database {
      */
     fun isEmailScheduled(emailById: Email, state: Boolean) {
         this.collection.updateOne(Email::id eq emailById.id, Email::active setTo state)
+    }
+
+    fun saveSmtpServer(smtpDetails: SmtpDetails) {
+
     }
 }

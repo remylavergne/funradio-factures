@@ -2,6 +2,7 @@ package dev.remylavergne
 
 import dev.remylavergne.routing.create
 import dev.remylavergne.routing.scheduling
+import dev.remylavergne.routing.smtp
 import dev.remylavergne.services.SchedulingService
 import io.ktor.application.Application
 import io.ktor.application.ApplicationEnvironment
@@ -30,6 +31,10 @@ class Create()
 @KtorExperimentalLocationsAPI
 @Location("/scheduling")
 class Scheduling()
+
+@KtorExperimentalLocationsAPI
+@Location("/smtp")
+class ServerSmtp()
 
 @KtorExperimentalLocationsAPI
 @Location("/attachments") // Get all
@@ -79,6 +84,7 @@ fun Application.module(testing: Boolean = false) {
         trace { application.log.warn(it.buildText()) }
         create(uploadDir)
         scheduling()
+        smtp()
     }
 }
 
