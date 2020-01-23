@@ -13,6 +13,7 @@ object Database {
     private lateinit var client: MongoClient
     private lateinit var database: MongoDatabase
     private lateinit var collection: MongoCollection<Email>
+    private lateinit var smtpDetailsCollection: MongoCollection<SmtpDetails>
 
     private val uri =
         MongoClientURI("mongodb://${EnvironmentVariables.mongoUsername}:${EnvironmentVariables.mongoPassword}@${EnvironmentVariables.mongoHostname}:${EnvironmentVariables.mongoPort}")
@@ -22,7 +23,8 @@ object Database {
         try {
             client = KMongo.createClient(uri = uri)
             database = client.getDatabase(DATABASE_NAME)
-            collection = database.getCollection()
+            collection = database.getCollection<Email>()
+            smtpDetailsCollection = database.getCollection<SmtpDetails>()
         } catch (e: Exception) {
             throw e
         }
@@ -30,6 +32,10 @@ object Database {
 
     fun persist(email: Email) {
         this.collection.insertOne(email)
+    }
+
+    fun persistSmtpServer(smtpDetails: SmtpDetails) {
+        this.smtpDetailsCollection.insertOne(smtpDetails)
     }
 
     @Throws(Exception::class)
@@ -48,9 +54,5 @@ object Database {
      */
     fun isEmailScheduled(emailById: Email, state: Boolean) {
         this.collection.updateOne(Email::id eq emailById.id, Email::active setTo state)
-    }
-
-    fun saveSmtpServer(smtpDetails: SmtpDetails) {
-
     }
 }

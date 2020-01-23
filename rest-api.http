@@ -44,7 +44,7 @@ Content-Type: application/json
 
 {
     "start": true,
-    "emailId": "5fb91ec6-a922-422c-840c-709958aa2b85"
+    "emailId": "7f33450a-16bb-4bb6-88f6-fd7ca1e86a4e"
 }
 
 ### Stop a job 
@@ -53,10 +53,21 @@ Content-Type: application/json
 
 {
     "start": false,
-    "emailId": "cff4deaf-e231-48cd-9d4b-b219104c6175"
+    "emailId": "9eec5e68-8588-4c7d-bfde-8b90cba36bf5"
 }
 
 ### Get all current jobs running
 GET http://localhost:8080/scheduling
 Content-Type: application/json
 
+### Create and persist a new SMTP informations
+
+POST http://localhost:8080/smtp
+Content-Type: application/json
+
+{
+    "server": "smtp.gmail.com",
+    "port": 587,
+    "login": "login",
+    "password": "password"
+}

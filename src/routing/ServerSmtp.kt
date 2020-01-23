@@ -31,7 +31,7 @@ fun Route.smtp() {
 
         val smtpDetails = call.receive<SmtpDetails>()
 
-        Database.saveSmtpServer(smtpDetails)
+        Database.persistSmtpServer(smtpDetails)
 
         call.respond(HttpStatusCode.OK, "SMTP Server saved.")
     }
