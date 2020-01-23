@@ -31,9 +31,13 @@ fun Route.smtp() {
 
         val smtpDetails = call.receive<SmtpDetails>()
 
-        Database.persistSmtpServer(smtpDetails)
+        try {
+          Database.persistSmtpServer(smtpDetails)
+        } catch (e: Exception) {
+            call.respond(HttpStatusCode.BadRequest, "SMTP Server save failed...")
+        }
 
-        call.respond(HttpStatusCode.OK, "SMTP Server saved.")
+        call.respond(HttpStatusCode.OK, "SMTP Server well saved.")
     }
 
     delete<ServerSmtp> {

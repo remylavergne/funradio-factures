@@ -35,7 +35,7 @@ object Database {
     }
 
     fun persistSmtpServer(smtpDetails: SmtpDetails) {
-        this.smtpDetailsCollection.insertOne(smtpDetails)
+        this.smtpDetailsCollection.insertOne(smtpDetails.generateUUID())
     }
 
     @Throws(Exception::class)
