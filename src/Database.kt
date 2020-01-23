@@ -5,13 +5,15 @@ import com.mongodb.MongoClientURI
 import com.mongodb.client.MongoCollection
 import com.mongodb.client.MongoDatabase
 import dev.remylavergne.models.Email
+import dev.remylavergne.models.SmtpDetails
 import org.litote.kmongo.*
 
 object Database {
 
-    lateinit var client: MongoClient
-    lateinit var database: MongoDatabase
-    lateinit var collection: MongoCollection<Email>
+    private lateinit var client: MongoClient
+    private lateinit var database: MongoDatabase
+    private lateinit var collection: MongoCollection<Email>
+    private lateinit var smtpDetailsCollection: MongoCollection<SmtpDetails>
 
     private val uri =
         MongoClientURI("mongodb://${EnvironmentVariables.mongoUsername}:${EnvironmentVariables.mongoPassword}@${EnvironmentVariables.mongoHostname}:${EnvironmentVariables.mongoPort}")
@@ -21,7 +23,8 @@ object Database {
         try {
             client = KMongo.createClient(uri = uri)
             database = client.getDatabase(DATABASE_NAME)
-            collection = database.getCollection()
+            collection = database.getCollection<Email>()
+            smtpDetailsCollection = database.getCollection<SmtpDetails>()
         } catch (e: Exception) {
             throw e
         }
@@ -29,6 +32,10 @@ object Database {
 
     fun persist(email: Email) {
         this.collection.insertOne(email)
+    }
+
+    fun persistSmtpServer(smtpDetails: SmtpDetails) {
+        this.smtpDetailsCollection.insertOne(smtpDetails.generateUUID())
     }
 
     @Throws(Exception::class)

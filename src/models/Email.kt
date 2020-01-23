@@ -11,6 +11,7 @@ data class Email(
     var attachmentName: String?,
     var createdAt: Long,
     var active: Boolean = false,
-    var delayMillis: Long = 10000, // Every 10 seconds
-    var repeatEvery: Long = 10000// Default: 10 seconds
+    var startAt: Long,
+    var repeatEvery: Long,
+    var stopAt: Long
 )
