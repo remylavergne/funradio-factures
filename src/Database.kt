@@ -38,7 +38,6 @@ object Database {
         this.smtpDetailsCollection.insertOne(smtpDetails.generateUUID())
     }
 
-    @Throws(Exception::class)
     fun getEmailById(id: String): Email? {
         return this.collection.findOne(Email::id eq id)
     }
@@ -51,5 +50,9 @@ object Database {
      */
     fun isEmailScheduled(emailById: Email, state: Boolean) {
         this.collection.updateOne(Email::id eq emailById.id, Email::active setTo state)
+    }
+
+    fun linkSMTPToEmail(smtpServerId: String, emailId: String) {
+        this.collection.updateOne(Email::id eq emailId, Email::smtpServerId setTo smtpServerId)
     }
 }
