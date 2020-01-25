@@ -39,11 +39,8 @@ object Database {
     }
 
     @Throws(Exception::class)
-    fun getEmailById(id: String): Email {
-        val email = this.collection.findOne(Email::id eq id)
-        email?.let {
-            return it
-        } ?: throw Exception("Email id $id not found !")
+    fun getEmailById(id: String): Email? {
+        return this.collection.findOne(Email::id eq id)
     }
 
     /**

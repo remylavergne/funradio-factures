@@ -1,6 +1,8 @@
 package dev.remylavergne.services
 
 import dev.remylavergne.Database
+import dev.remylavergne.SchedulingEnum
+import dev.remylavergne.SchedulingStatus
 import dev.remylavergne.models.Email
 import dev.remylavergne.models.dto.SchedulerDto
 import kotlinx.coroutines.*
@@ -41,16 +43,21 @@ object SchedulingService {
      * @param jobs email list to process
      */
     @InternalCoroutinesApi
-    fun schedule(jobs: List<SchedulerDto>) {
+    fun schedule(jobs: List<SchedulerDto>): List<SchedulingStatus> {
+        val schedulingStatus = mutableListOf<SchedulingStatus>()
+
         jobs.forEach { schedule ->
-            if (schedule.start) {
+            val status: SchedulingStatus = if (schedule.start) {
                 this.start(schedule)
             } else {
                 this.stop(schedule)
             }
+
+            schedulingStatus.add(status)
         }
+        return schedulingStatus // TODO: Handle this, show which operation failed
     }
-    
+
     fun getAllCurrentJobs(): List<Email> =
         this.jobsRunningInstances.values.filter { it.stopAt < System.currentTimeMillis() }
 
@@ -59,23 +66,54 @@ object SchedulingService {
      * The mail is scheduled until a user end specific action
      * @param job minimums informations to scheduled an email
      */
-    private fun start(job: SchedulerDto) {
-        // Create Email
-        val emailById = Database.getEmailById(job.emailId)
-        // Create Job
-        val jobPrepared = startCoroutineTimer(
-            startAt = emailById.startAt,
-            repeatEvery = emailById.repeatEvery,
-            stopAt = emailById.stopAt
+    private fun start(job: SchedulerDto): SchedulingStatus {
+
+        val emailById = getEmailByIdFromLocalStorage(job.emailId) ?: return SchedulingStatus(
+            job.emailId,
+            SchedulingEnum.ERROR_EMAIL_DOESNT_EXIST.message
+        )
+
+        if (emailById.smtpServerId.isNullOrEmpty()) {
+            return SchedulingStatus(emailById.id, SchedulingEnum.NO_SMTP_SERVER.message)
+        }
+
+        val jobPrepared = createJob(emailById)
+
+        saveJobInstance(jobPrepared, emailById)
+
+        if (!updateEmailScheduleStatus(emailById, true)) {
+            return SchedulingStatus(emailById.id, SchedulingEnum.UNABLE_TO_UPDATE_EMAIL_STATUS.message)
+        }
+
+        return SchedulingStatus(emailById.id, SchedulingEnum.SUCCESS_START.message)
+    }
+
+    private fun getEmailByIdFromLocalStorage(emailId: String) = Database.getEmailById(emailId)
+
+    private fun createJob(email: Email): Job {
+        return startCoroutineTimer(
+            startAt = email.startAt,
+            repeatEvery = email.repeatEvery,
+            stopAt = email.stopAt
         ) {
             // Create a new email to schedule
             // ScheduledEmail(emailById)
-            println("Mail sent")
+            println("Mail sent") // TODO: Remove
         }
-        // Save instance email running
-        this.jobsRunningInstances[jobPrepared] = emailById
-        // Persist email state
-        Database.isEmailScheduled(emailById, true)
+    }
+
+    private fun saveJobInstance(job: Job, email: Email) {
+        this.jobsRunningInstances[job] = email
+    }
+
+    private fun updateEmailScheduleStatus(email: Email, state: Boolean): Boolean {
+        return try {
+            Database.isEmailScheduled(email, state)
+            true
+        } catch (e: Exception) {
+            // TODO: Log exception
+            false
+        }
     }
 
     /**
@@ -83,18 +121,25 @@ object SchedulingService {
      * @param job minimums informations to stop a the current job link to email
      */
     @InternalCoroutinesApi
-    private fun stop(job: SchedulerDto) {
+    private fun stop(job: SchedulerDto): SchedulingStatus {
         // Find email running to stop
         val emailsFound = this.jobsRunningInstances.filter { (_, email) ->
             email.id == job.emailId
         }
-        // Stop all jobs founds
+
+        if (emailsFound.isEmpty()) {
+            return SchedulingStatus(job.emailId, SchedulingEnum.EMAIL_NOT_ACTUALLY_SCHEDULED.message)
+        }
+
+        // Stop all jobs founds (In real life, just one)
         emailsFound.forEach { (job, email) ->
             cancelJob(job)
             removeJobCanceled(job)
             // Persist email state
-            Database.isEmailScheduled(email, false)
+            updateEmailScheduleStatus(email, false)
         }
+
+        return SchedulingStatus(job.emailId, SchedulingEnum.SUCCESS_STOP.message) // TODO: Make this
     }
 
     /**

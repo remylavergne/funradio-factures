@@ -13,5 +13,6 @@ data class Email(
     var active: Boolean = false,
     var startAt: Long,
     var repeatEvery: Long,
-    var stopAt: Long
+    var stopAt: Long,
+    var smtpServerId: String? = null
 )

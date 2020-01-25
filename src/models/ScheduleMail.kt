@@ -1,7 +1,6 @@
 package dev.remylavergne.models
 
 import dev.remylavergne.AttachmentRetriever
-import dev.remylavergne.EnvironmentVariables
 import dev.remylavergne.services.SchedulingService
 import org.simplejavamail.api.mailer.config.TransportStrategy
 import org.simplejavamail.email.EmailBuilder
@@ -10,7 +9,8 @@ import org.simplejavamail.api.email.Email as SimpleJavaEmail
 
 
 data class ScheduledEmail(
-    val email: Email
+    val email: Email,
+    val smtpServer: SmtpDetails
 ) {
 
     init {
@@ -61,10 +61,10 @@ data class ScheduledEmail(
 
         val mailer = MailerBuilder
             .withSMTPServer(
-                EnvironmentVariables.smtpServer,
-                EnvironmentVariables.smtpPort.toInt(),
-                EnvironmentVariables.smtpUser,
-                EnvironmentVariables.smtpPassword
+                smtpServer.server,
+                smtpServer.port,
+                smtpServer.login,
+                smtpServer.password
             )
             .withTransportStrategy(TransportStrategy.SMTP_TLS)
             .withSessionTimeout(10 * 1000)

@@ -26,23 +26,15 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
  */
 @KtorExperimentalLocationsAPI
 @Location("/create") // TODO: rename /attachments/create
-class Create()
+class Create
 
 @KtorExperimentalLocationsAPI
 @Location("/scheduling")
-class Scheduling()
+class Scheduling
 
 @KtorExperimentalLocationsAPI
 @Location("/smtp")
-class ServerSmtp()
-
-@KtorExperimentalLocationsAPI
-@Location("/attachments") // Get all
-class Attachment()
-
-@KtorExperimentalLocationsAPI
-@Location("/attachments/{id}/delete")
-class AttachmentDelete(val id: List<String>)
+class ServerSmtp
 
 @InternalCoroutinesApi
 @KtorExperimentalLocationsAPI
