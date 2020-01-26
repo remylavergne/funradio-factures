@@ -87,7 +87,7 @@ fun Application.module(testing: Boolean = false) {
 }
 
 /**
- * Create a directory for uploads
+ * Create a directory for all files uploaded
  * Configuration located in application.conf
  */
 private fun createUploadDirectory(environment: ApplicationEnvironment): File {

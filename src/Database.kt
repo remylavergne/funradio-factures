@@ -31,14 +31,26 @@ object Database {
         }
     }
 
+    /**
+     * Save email locally
+     * @param email to save
+     */
     fun persist(email: Email) {
         this.collection.insertOne(email)
     }
 
+    /**
+     * Save new SMTP server informations
+     * @param smtpDetails informations
+     */
     fun persistSmtpServer(smtpDetails: SmtpDetails) {
         this.smtpDetailsCollection.insertOne(smtpDetails.generateUUID())
     }
 
+    /**
+     * Find an email by its id
+     * @param email id (UUID v4)
+     */
     fun getEmailById(id: String): Email? {
         return this.collection.findOne(Email::id eq id)
     }
@@ -53,6 +65,9 @@ object Database {
         this.collection.updateOne(Email::id eq emailById.id, Email::active setTo state)
     }
 
+    /**
+     * Update an existing email with a SMTP server id
+     */
     fun linkSMTPToEmail(smtpServerId: String, emailId: String) {
         this.collection.updateOne(Email::id eq emailId, Email::smtpServerId setTo smtpServerId)
     }
