@@ -6,6 +6,7 @@ import com.mongodb.client.MongoCollection
 import com.mongodb.client.MongoDatabase
 import dev.remylavergne.models.Email
 import dev.remylavergne.models.SmtpDetails
+import dev.remylavergne.models.dto.SmtpDetailsDto
 import org.litote.kmongo.*
 
 object Database {
@@ -54,5 +55,15 @@ object Database {
 
     fun linkSMTPToEmail(smtpServerId: String, emailId: String) {
         this.collection.updateOne(Email::id eq emailId, Email::smtpServerId setTo smtpServerId)
+    }
+
+    fun getAllSmtpServers(): MutableList<SmtpDetailsDto> {
+        val collections = mutableListOf<SmtpDetailsDto>()
+
+        this.smtpDetailsCollection.find(SmtpDetails::class.java).forEach { smtpDetail ->
+            collections.add(smtpDetail.toDto())
+        }
+
+        return collections
     }
 }

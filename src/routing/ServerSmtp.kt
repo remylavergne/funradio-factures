@@ -3,6 +3,7 @@ package dev.remylavergne.routing
 import dev.remylavergne.Database
 import dev.remylavergne.Smtp
 import dev.remylavergne.models.SmtpDetails
+import dev.remylavergne.models.dto.SmtpDetailsDto
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
 import io.ktor.locations.KtorExperimentalLocationsAPI
@@ -23,8 +24,15 @@ fun Route.smtp() {
      * Get all SMTP servers saved in database
      */
     get<Smtp> {
+        var allSmtpServers: MutableList<SmtpDetailsDto> = mutableListOf()
 
+        try {
+            allSmtpServers = Database.getAllSmtpServers()
+        } catch (e: Exception) {
+            call.respond(HttpStatusCode.BadRequest, allSmtpServers)
+        }
 
+        call.respond(HttpStatusCode.OK, allSmtpServers)
     }
 
     post<Smtp> {
