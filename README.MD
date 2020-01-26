@@ -27,6 +27,13 @@ MAIS, mon but ici est d'apprendre des choses, et donc, monter en compétences:
 - `MONGO_HOSTNAME`: Adresse du serveur de la base de données (`localhost` si le serveur n'est pas dans un container, sinon il faut utiliser le nom du container par défaut `mongo_container`)
 - `MONGO_PORT`: Port de la base de donnés (défaut: 27017)
 
+Pour exporter facilement toutes les variables d'environnement, veuillez utiliser le script à la racine du projet `set_environment_variables.sh` [lien direct](https://github.com/remylavergne/funradio-factures/blob/develop/set_environment_variables.sh) (⚠️ remplir avec vos valeurs avant de l'exécuter) :
+
+```terminal
+$ chmod +x set_environment_variables.sh && ./set_environment_variables.sh
+// Every environment variables well exported.
+```
+
 ## 🏁 Lancer l'application (JAR seul pour le moment)
 
 - Télécharger la dernière release stable (JAR) : [<https://github.com/remylavergne/funradio-factures/releases>](Dernière release)
