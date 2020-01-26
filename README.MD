@@ -27,29 +27,23 @@ MAIS, mon but ici est d'apprendre des choses, et donc, monter en compétences:
 - `MONGO_HOSTNAME`: Adresse du serveur de la base de données (`localhost` si le serveur n'est pas dans un container, sinon il faut utiliser le nom du container par défaut `mongo_container`)
 - `MONGO_PORT`: Port de la base de donnés (défaut: 27017)
 
-### Configuration SMTP
-
-- `SMTP_SERVER`: Adresse du server SMTP (ex: smtp.gmail.com)
-- `SMTP_PORT`: Port du serveur SMTP (default: 587)
-- `SMTP_USER`: Nom d'utilisateur
-- `SMTP_PASSWORD`: Mot de passe de connexion
-
 Pour exporter facilement toutes les variables d'environnement, veuillez utiliser le script à la racine du projet `set_environment_variables.sh` [lien direct](https://github.com/remylavergne/funradio-factures/blob/develop/set_environment_variables.sh) (⚠️ remplir avec vos valeurs avant de l'exécuter) :
 
-```
+```terminal
 $ chmod +x set_environment_variables.sh && ./set_environment_variables.sh
-
 // Every environment variables well exported.
 ```
 
 ## 🏁 Lancer l'application (JAR seul pour le moment)
 
-- Télécharger la dernière release stable (JAR) : [https://github.com/remylavergne/funradio-factures/releases](Dernière release)
+- Télécharger la dernière release stable (JAR) : [<https://github.com/remylavergne/funradio-factures/releases>](Dernière release)
 - Exécuter le JAR :
 
-```
-$ docker-compose up -d // Lance la base de données MongoDB
-$ java -jar factures-{version}-all.jar // Lance le serveur
+```terminal
+$ docker-compose up -d
+// Lance la base de données MongoDB
+$ java -jar factures-{version}-all.jar
+// Lance le serveur
 ```
 
 ## 👩‍💻 Comment utiliser l'application
@@ -103,6 +97,32 @@ example@gmail.com
 
 ```http
 Email with id f4528697-9a71-468a-9e13-9a7abd2d36b7 has been created.
+```
+
+### Création d'un serveur SMTP
+
+```http
+POST /smtp HTTP/1.1
+Host: localhost:8080
+
+{
+    "server": "smtp.gmail.com",
+    "port": 587,
+    "login": "mon.login",
+    "password": "M0n_paSsWord"
+}
+```
+
+### ⚠️ Ajouter un serveur SMTP pour pouvoir envoyer l'email
+
+```http
+POST /smtp/link HTTP/1.1
+Host: localhost:8080
+
+{
+    "emailId": "f4528697-9a71-468a-9e13-9a7abd2d36b7",
+    "smtpServerId": "814ac352-16be-4684-bc85-cbf0f0bfc18b"
+}
 ```
 
 ### Lancer l'envoi automatique de cet email

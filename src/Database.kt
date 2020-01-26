@@ -6,6 +6,7 @@ import com.mongodb.client.MongoCollection
 import com.mongodb.client.MongoDatabase
 import dev.remylavergne.models.Email
 import dev.remylavergne.models.SmtpDetails
+import dev.remylavergne.models.dto.SmtpDetailsDto
 import org.litote.kmongo.*
 
 object Database {
@@ -30,15 +31,26 @@ object Database {
         }
     }
 
+    /**
+     * Save email locally
+     * @param email to save
+     */
     fun persist(email: Email) {
         this.collection.insertOne(email)
     }
 
+    /**
+     * Save new SMTP server informations
+     * @param smtpDetails informations
+     */
     fun persistSmtpServer(smtpDetails: SmtpDetails) {
         this.smtpDetailsCollection.insertOne(smtpDetails.generateUUID())
     }
 
-    @Throws(Exception::class)
+    /**
+     * Find an email by its id
+     * @param email id (UUID v4)
+     */
     fun getEmailById(id: String): Email? {
         return this.collection.findOne(Email::id eq id)
     }
@@ -51,5 +63,22 @@ object Database {
      */
     fun isEmailScheduled(emailById: Email, state: Boolean) {
         this.collection.updateOne(Email::id eq emailById.id, Email::active setTo state)
+    }
+
+    /**
+     * Update an existing email with a SMTP server id
+     */
+    fun linkSMTPToEmail(smtpServerId: String, emailId: String) {
+        this.collection.updateOne(Email::id eq emailId, Email::smtpServerId setTo smtpServerId)
+    }
+
+    fun getAllSmtpServers(): MutableList<SmtpDetailsDto> {
+        val collections = mutableListOf<SmtpDetailsDto>()
+
+        this.smtpDetailsCollection.find(SmtpDetails::class.java).forEach { smtpDetail ->
+            collections.add(smtpDetail.toDto())
+        }
+
+        return collections
     }
 }

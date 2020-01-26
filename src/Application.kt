@@ -3,6 +3,7 @@ package dev.remylavergne
 import dev.remylavergne.routing.create
 import dev.remylavergne.routing.scheduling
 import dev.remylavergne.routing.smtp
+import dev.remylavergne.routing.smtplink
 import dev.remylavergne.services.SchedulingService
 import io.ktor.application.Application
 import io.ktor.application.ApplicationEnvironment
@@ -34,7 +35,11 @@ class Scheduling
 
 @KtorExperimentalLocationsAPI
 @Location("/smtp")
-class ServerSmtp
+class Smtp
+
+@KtorExperimentalLocationsAPI
+@Location("/smtp/link")
+class SmtpLink
 
 @InternalCoroutinesApi
 @KtorExperimentalLocationsAPI
@@ -77,11 +82,12 @@ fun Application.module(testing: Boolean = false) {
         create(uploadDir)
         scheduling()
         smtp()
+        smtplink()
     }
 }
 
 /**
- * Create a directory for uploads
+ * Create a directory for all files uploaded
  * Configuration located in application.conf
  */
 private fun createUploadDirectory(environment: ApplicationEnvironment): File {
