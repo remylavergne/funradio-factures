@@ -28,9 +28,9 @@ fun Route.scheduling() {
 
         val schedulerDto = call.receive<SchedulerDto>()
 
-        SchedulingService.schedule(listOf(schedulerDto))
+        val scheduleResults = SchedulingService.schedule(listOf(schedulerDto))
 
-        call.respond("Jobs started !")
+        call.respond(scheduleResults)
     }
 
 }
